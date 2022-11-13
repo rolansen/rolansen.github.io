@@ -1,0 +1,14 @@
+title: rolansen
+email: rolansenta4@gmail.com
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
+
+# Build settings
+markdown: kramdown
+theme: tactile
+gems:
+  - jekyll-feed
+exclude:
+  - code
+  - Gemfile
+  - Gemfile.lock

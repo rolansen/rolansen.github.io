@@ -379,7 +379,7 @@ ahm <- function(aoi_poly, aerial_path, sat_paths,
   print('Writing vrt to GeoTiff')
   writeRaster(matched_aerial_vrt, paste(out_name, '.tif', sep=''), overwrite=TRUE) 
   
-  #remove results from scratch dir #TODO: uncomment the unlink line
+  #remove results from scratch dir 
   print('Deleting scratch tiles')
   unlink(scratch_dir_path, recursive = TRUE)
 }

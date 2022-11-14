@@ -17,10 +17,6 @@ $$
 E = mc^2
 $$
 
-<<[old]
-Tools for implicating lidar data with other GIS data types (vector & raster) are still relatively limited. ArcGIS & QGIS have stuff, but … . LasTools and PDAL are great, but. (come up with a few hypothetical scenarios). What if we want to do ___, or ____?
-Luckily, we have Python is at this point universal among those who may not be professional software developers (analysts, technicians, data scientists…). Here I’ll show how to use it to do lidar stuff. Laspy (+ lazrs python port), numpy, scipy, and geopandas make working with vector/lidar easy, flexible, and fast. >>
-
 -----
 
 Let’s say we’ve got a set of polygons representing tree canopies and we want to compute each tree’s maximum height and its leaf area index (LAI). Aerial lidar can help us easily compute both of these. 

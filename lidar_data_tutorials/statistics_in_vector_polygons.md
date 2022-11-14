@@ -11,7 +11,7 @@ However, tools for integrating lidar data with other GIS data types (vector & ra
 It seems relatively difficult to do these things with the tools I listed above. 
 R could be helpful here via the package [lidR](https://cran.r-project.org/web/packages/lidR/index.html). Another option is Python, which is perhaps more ubiquitous at this point and has the huge advantage of letting us work with point clouds as numpy arrays. Here, I’ll go over a hypothetical use case which will show how easy, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
 
-The libraries that we’ll need are laspy, the Python bindings for the Rust crate laz-rs (see the laspy installation instructions [link]), NumPy, SciPy, and GeoPandas. This may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
+The libraries that we’ll need are laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html), NumPy, SciPy, and GeoPandas. This may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
 
 $$
 E = mc^2

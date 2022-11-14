@@ -1,4 +1,3 @@
-# rolansen
 ## Topics
 [Radiometric correction](/radiometric_correction/home.md)
 

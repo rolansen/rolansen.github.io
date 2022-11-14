@@ -53,8 +53,8 @@ First, let’s change directories to the folder in which we’re keeping the dat
 import geopandas as gpd
 import os
 
-os.chdir(r'D:\HeDemo\data')
-tree_polys_filename = 'soldiers_circle_tree_polys_epsg6350.geojson'
+os.chdir(r'your\directory')
+tree_polys_filename = 'canopy_polygons.geojson'
 
 tree_polys = gpd.read_file(tree_polys_filename)
 tree_polys['max_height'] = np.nan
@@ -65,7 +65,7 @@ Next, we’ll read our lidar dataset and convert it to an ndarray. laspy makes i
 import laspy
 import numpy as np
 
-lidar_filename = r'D:\HeDemo\data\lidar\USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz'
+lidar_filename = 'USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz'
 scan_angle_factor = 0.006 #to convert from value given by las object, see https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998.
 
 las = laspy.read(fpath)

@@ -191,14 +191,9 @@ tree_polys.to_file(output_path)
 {% endhighlight %}
 -----
 
-**TODO: Explain results (run time, etc), make some comments, show some pictures.**
+On my mid-end home desktop this all takes about a couple of minutes or so. We may have seen some performance gains from multithreading, since NumPy operations aren't constrained by Python's global interpreter lock. The same can be said of the SciPy methods used here. Multithreading would have been especially advantages if we had to read multiple laz files. As mentioned above, we could have made a more efficient point-in-polygon function, too.
 
-If you’d like to reproduce exactly what we did here, here’s a [script](google.com) which puts together everything we did above. **TODO: actually link to script** I tried to keep things in the order we discuss them in this post, in practice it would definitely make more sense to import our libraries at the start of the script, etc. Again, the polygons can be found here [link] and the laz file here [link]. 
-{Here’s the whole code, if you’d like. Here’s the geojson and here’s the laz files, if you’d like to completely reproduce}
-
-{Note “horizontal error” of polygons and lidar?}
-
-{One thing I didn’t go over here is multithreading.}
+If you’d like to reproduce exactly what we did here, here’s a [script](google.com) which puts together everything we did above. **TODO: actually link to script** I tried to keep things in the order we discuss them in this post, but in practice it would definitely make more sense to import our libraries at the start of the script, etc. Again, the polygons can be found [here](link) **TODO: upload geojson** and the laz file [here](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz). 
 
 -----
 

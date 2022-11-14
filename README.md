@@ -4,4 +4,4 @@
 
 [Lidar data tutorials](/lidar_data_tutorials/home.md)
 
-[Neutral landscape models](https://google.com)
+[Neutral landscape models](/neutral_landscape_models/home.md)

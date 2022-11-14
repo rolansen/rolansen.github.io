@@ -108,7 +108,7 @@ kdtree_las_xy = KDTree(np_las[:, :2])
 
 Now we’re ready to calculate our variables of interest. For each polygon:
 
-* Do a range query to find the points with (x,y) coordinates near the polygon. I like to use a range that’s slightly larger than the minimum enclosing circle of the minimum bounding rectangle of the polygon, since it’s guaranteed to include each point in the polygon and also makes it more likely that we’ll include many ground returns. Here, we’ll use a buffer of 2 meters for the minimum enclosing circle.
+* Do a range query to find the points with (x,y) coordinates near the polygon. I like to use a range that’s slightly larger than the minimum enclosing circle of the minimum bounding rectangle of the polygon, since it’s guaranteed to include each point in the polygon and also makes it less likely that we won't include many ground returns. Here, we’ll use a buffer of 2 meters for the minimum enclosing circle.
 {% highlight Python %}
 #"poly" is a row returned by GeoDataFrame.iterrows()
 search_radius_buffer = 2
@@ -117,7 +117,17 @@ poly_mbr_centroid = np.array([(poly_mbr[2] + poly_mbr[0]) / 2, (poly_mbr[3] + po
 poly_search_radius = search_radius_buffer + ((poly_mbr[2] - poly_mbr_centroid[0])**2 + (poly_mbr[3] - poly_mbr_centroid[1])**2) ** 0.5
 near_poly_np_las = np_las[kdtree_las_xy.query_ball_point(poly_mbr_centroid, poly_search_radius)]
 {% endhighlight %}
-**TODO: picture of buffered MEC, MEC, MBR, and polygon**
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/bounding_geometries.png"
+       width="500"
+       height="350"
+     />
+     <figcaption>Polygons (green), their envelopes (blue), the envelopes' minimum enclosing circles (red), and buffered circles (pink).\n</figcaption>
+  </figure>
+</div>
+
 * Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just work with theirs and not try to come up with our own. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and will accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
 {% highlight Python %}
 def get_height_above_ground_for_points(points):

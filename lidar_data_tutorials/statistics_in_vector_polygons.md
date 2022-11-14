@@ -43,8 +43,8 @@ Let’s say we’ve got a set of polygons representing tree canopies and we want
 <div style="text-align: center">
   <img
     src="/assets/tree_polygons_over_bing_imagery.png"
-    width="1000"
-    height="700"
+    width="500"
+    height="350"
   />
 </div>
 

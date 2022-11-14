@@ -40,14 +40,14 @@ $$
 
 Let’s say we’ve got a set of polygons representing tree canopies and we want to compute each tree’s maximum height and its leaf area index (LAI). For this post I drew a set of polygons over tree canopies around [Soldier’s Circle](https://www.tclf.org/landscapes/soldiers-circle), a parkway in Buffalo, New York. The majority of these trees are American elms. I used Bing imagery as a reference; in the image below you can see the polygons in green overlaying Bing imagery. You can download the polygons in GeoJSON format [here](https://google.com). **TODO: make sure geojson's good, upload it to an "assets" folder or something, and actually link to it**
 
-<div style="text-align: center">
-  <img
-    src="/assets/tree_polygons_over_bing_imagery.png"
-    width="500"
-    height="350"
-    <div class="caption">Caption 1</div>
-  />
-</div>
+<figure>
+    <img 
+         src='/assets/tree_polygons_over_bing_imagery.png' alt='missing' 
+         width="500"
+         height="350"
+    />
+    <figcaption>Caption goes here</figcaption>
+</figure>
 
 
 

@@ -50,14 +50,30 @@ If we were to do something like this in practice, we’d probably be segmenting 
 
 -----
 
-First, let’s change directories to the folder in which we’re keeping the data, read our polygon layer as a GeoDataFrame, and instantiate the fields we’d like to calculate with the point cloud:
+First, let’s change directories to the folder in which we’re keeping the data, read our polygon layer as a GeoDataFrame, and instantiate the fields we’d like to calculate with the help of the point cloud:
 {% highlight Python %}
+#change directories and read polygons
 import geopandas as gpd
-{os.chdir(), read polygons, create columns.}
+import os
+
+os.chdir(r'D:\HeDemo\data')
+tree_polys_filename = 'soldiers_circle_tree_polys_epsg6350.geojson'
+tree_polys = gpd.read_file(tree_polys_filename)
+tree_polys['max_height'] = np.nan
+tree_polys['lai'] = np.nan
 {% endhighlight %}
 
-Next, we’ll read our lidar dataset and convert it to an ndarray. laspy makes it very easy to read lidar data, and while laspy’s LasData objects already represent point clouds as numpy arrays (see the point.array attribute), I find that it’s often easier to just convert the dimensions of interest directly, since so many libraries are able to work with ndarrays. Since we want the scaled [link {to laspy page explaining what scale means}] versions of the x, y, and z dimensions, which aren’t included in las.point.array, we’ll make a new array which includes these dimensions, the class code dimension (which we’ll use to find heights above ground elevation), the scan angle (which we’ll use to calculate LAI), and an empty column that we’ll fill in with heights. 
-[code]
+Next, we’ll read our lidar dataset and convert it to an ndarray. laspy makes it very easy to read lidar data, and while laspy’s LasData objects already represent point clouds as mdarrays (see the point.array attribute), I find that it’s often easier to just convert the dimensions of interest directly, since so many libraries are able to work with ndarrays. We want the [scaled versions of the x, y, and z dimensions](https://laspy.readthedocs.io/en/latest/intro.html#point-records), which aren’t included in LasData.point.array, so we’ll make a new ndarray which includes these dimensions, the class code dimension (which we’ll use to find heights above ground elevation), the scan angle (which we’ll use to calculate LAI), and an empty column that we’ll fill in with heights. 
+{% highlight Python %}
+import laspy
+import numpy as np
+
+lidar_filename = r'D:\HeDemo\data\lidar\USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz'
+scan_angle_factor = 0.006 #to convert from value given by las object, see https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998.
+las = laspy.read(fpath)
+np_las = np.transpose(np.vstack([las.x, las.y, las.z, las.classification, las.scan_angle*scan_angle_factor, np.zeros(len(las))]))
+{% endhighlight %}
+Note that the scan angle dimension doesn’t actually provide us with angles, and we need to multiply it by a factor to get the actual angle. See [this comment](https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998) for an in-depth explanation.
 In practice, we might want to make an array from more than one lidar file, in which case something like this could be helpful: np.append(np_las_1, np_las_2, axis=0)
 {read lidar and convert to numpy. As an aside, mention that in practice we might want to make an array from more than one lidar file, in which case np.append can be helpful: np.append(np_las_1, np_las_2, axis=0). Explain why we “convert” to numpy array (laspy dimensions are numpy arrays, but it’ll be easier to just work with an ndarray directly).} 
 
@@ -87,7 +103,7 @@ For a spherical leaf angle distribution, meaning all leaves have a uniform proba
 L = -cos(%mean_theta_lidar%) / 0.5 * ln(R_g/R_t)
 Where %mean_theta_lidar% is the mean lidar scanning angle of all returns in the polygon. Here’s the code for implementing this model:
 [code]
-Note we consider a return to be a ground return if its height above ground is less than or equal to 5 cm. Also note that the scan angle dimension doesn’t actually provide us with angles, and we multiply it by a factor to get the actual angle. (see this [link https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998] comment). {TODO: do this calculation beforehand, and copy/paste this part above}.
+Note we consider a return to be a ground return if its height above ground is less than or equal to 5 cm.
  
 
 {Explain procedure for each polygon:

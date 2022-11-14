@@ -20,9 +20,9 @@ This increase in the availability of lidar data has caused it to become more com
 
 However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on these returns? What if we wanted to limit our data to returns which fall in certain classes of a land cover image? 
 
-It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is one helpful option. Another is Python, which is perhaps more ubiquitous at this point, and has the huge advantage of letting us work with point clouds as NumPy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
+It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is one helpful option. Another is Python, which is perhaps more ubiquitous at this point, and has the huge advantage of letting us work with point clouds in the form of NumPy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
 
-To reproduce the code on this page, you'll need a Python environment which includes laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html), NumPy, SciPy, and GeoPandas. Things may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
+To reproduce the code on this page, you'll need a Python environment which includes laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html)), NumPy, SciPy, and GeoPandas. Things may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
 
 -----
 

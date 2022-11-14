@@ -45,8 +45,11 @@ Let’s say we’ve got a set of polygons representing tree canopies and we want
     src="/assets/tree_polygons_over_bing_imagery.png"
     width="500"
     height="350"
+    <div class="caption">Caption 1</div>
   />
 </div>
+
+
 
 Aerial lidar can help us easily compute both of the variables we're interested in. The lidar we’ll work with is from a 2019 survey. Here we’ll just use a single tile. USGS provides this data in laz format, and you can download it [here](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz).
 

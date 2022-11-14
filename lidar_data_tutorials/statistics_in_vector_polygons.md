@@ -14,7 +14,7 @@ R could be helpful here via the package [lidR](https://cran.r-project.org/web/pa
 The libraries that we’ll need are laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html), NumPy, SciPy, and GeoPandas. This may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
 
 $$
-sqrt{3}
+\sqrt{3}
 $$
 
 $$

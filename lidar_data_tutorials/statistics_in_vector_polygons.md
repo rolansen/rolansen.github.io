@@ -57,9 +57,9 @@ Let’s say we’ve got a set of polygons representing tree canopies and we want
        width="500"
        height="350"
      />
-     <figcaption>Polygons in green overlaying Bing imagery\n</figcaption>
+     <figcaption>Polygons in green overlaying Bing imagery</figcaption>
   </figure>
-</div>
+</div>\
 
 Aerial lidar can help us easily compute both of the variables we're interested in. The data we’ll work with is a single tile from a 2019 survey. USGS provides this dataset in laz format, and you can download it [here.](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz)
 
@@ -112,9 +112,9 @@ kdtree_las_xy = KDTree(np_las[:, :2])
        width="400"
        height="400"
      />
-     <figcaption>Depiction of k-d tree for a two-dimensional dataset. From Wikipedia.\n</figcaption>
+     <figcaption>Depiction of k-d tree for a two-dimensional dataset. From Wikipedia.</figcaption>
   </figure>
-</div>
+</div>\
 
 Now we’re ready to calculate our variables of interest. For each polygon:
 
@@ -134,9 +134,9 @@ near_poly_np_las = np_las[kdtree_las_xy.query_ball_point(poly_mbr_centroid, poly
        width="500"
        height="350"
      />
-     <figcaption>Polygons (green), their envelopes (blue), the envelopes' minimum enclosing circles (red), and buffered circles (pink).\n</figcaption>
+     <figcaption>Polygons (green), their envelopes (blue), the envelopes' minimum enclosing circles (red), and buffered circles (pink).</figcaption>
   </figure>
-</div>
+</div>\
 
 * Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just work with theirs and not try to come up with our own. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and will accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
 {% highlight Python %}

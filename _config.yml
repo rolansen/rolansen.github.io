@@ -1,14 +1,1 @@
-title: rolansen
-email: rolansenta4@gmail.com
-baseurl: "" 
-url: "" 
-
-# Build settings
-markdown: kramdown
-theme: tactile
-gems:
-  - jekyll-feed
-exclude:
-  - code
-  - Gemfile
-  - Gemfile.lock
+theme: jekyll-theme-architect

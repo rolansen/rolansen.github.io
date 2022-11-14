@@ -20,9 +20,9 @@ This increase in the availability of lidar data has caused it to become more com
 
 However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on these returns? What if we wanted to limit our data to returns which fall in certain classes of a land cover image? 
 
-It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is one helpful option. Another is Python, which is perhaps more ubiquitous at this point and has the huge advantage of letting us work with point clouds as NumPy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
+It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is one helpful option. Another is Python, which is perhaps more ubiquitous at this point, and has the huge advantage of letting us work with point clouds as NumPy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
 
-The libraries that we’ll need are laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html), NumPy, SciPy, and GeoPandas. This may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
+To reproduce the code on this page, you'll need a Python environment which includes laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html), NumPy, SciPy, and GeoPandas. Things may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
 
 -----
 
@@ -190,7 +190,7 @@ tree_polys.to_file(output_path)
 {% endhighlight %}
 -----
 
-On my mid-end home desktop this all takes about a couple of minutes or so. We would have seen some performance gains from multithreading, since NumPy operations aren't constrained by Python's global interpreter lock. The same can be said of the SciPy methods used here. Multithreading would have been especially advantages if we had to read multiple laz files. As mentioned before, we could have made a more efficient point-in-polygon function, too.
+On my mid-end home desktop this all takes about a minute. We would have seen some performance gains from multithreading, since NumPy operations aren't constrained by Python's global interpreter lock. The same can be said of the SciPy methods used here. Multithreading would have been especially advantages if we had to read multiple laz files. As mentioned before, we could have made a more efficient point-in-polygon function, too.
 
 If you’d like to reproduce exactly what we did here, here’s a [script](google.com) which puts together everything we did above. **TODO: actually link to script** I tried to keep things in the order we discuss them in this post, but in practice it would definitely make more sense to import our libraries at the start of the script, etc. I also put in some logic to deal with cases where polygons don't intersect any lidar returns. Again, the polygons can be found [here](link) **TODO: upload geojson** and the laz file [here](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz). 
 

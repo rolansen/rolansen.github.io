@@ -46,14 +46,15 @@ Aerial lidar can help us easily compute both of the variables we're interested i
 
 Both the lidar and the polygons use the coordinate reference system specified by EPSG:6350. 
 
-If we were to do something like this in practice, we’d probably be segmenting trees rather than working with polygons. I’ll go over how we can do this in a future post. We should also keep in mind that some of the polygons I drew will include some returns from rootftops. I’ll discuss how to handle that in the future, as well.
-
-{explain hypothetical scenario. Mention how tree polygons are unrealistic, but we’ll go over segmentation in a future post. Show pictures. Link to data}
+If we were to do something like this in practice, we’d probably be segmenting trees rather than working with polygons. I’ll go over how we can do this in a future post. Also, several of the polygons I drew will include some returns from rootftops. I’ll discuss how to handle that in the future, as well, but for now LAI estimates will be affected.
 
 -----
 
 First, let’s change directories to the folder in which we’re keeping the data, read our polygon layer as a GeoDataFrame, and instantiate the fields we’d like to calculate with the point cloud:
+{% highlight Python %}
+import geopandas as gpd
 {os.chdir(), read polygons, create columns.}
+{% endhighlight %}
 
 Next, we’ll read our lidar dataset and convert it to an ndarray. laspy makes it very easy to read lidar data, and while laspy’s LasData objects already represent point clouds as numpy arrays (see the point.array attribute), I find that it’s often easier to just convert the dimensions of interest directly, since so many libraries are able to work with ndarrays. Since we want the scaled [link {to laspy page explaining what scale means}] versions of the x, y, and z dimensions, which aren’t included in las.point.array, we’ll make a new array which includes these dimensions, the class code dimension (which we’ll use to find heights above ground elevation), the scan angle (which we’ll use to calculate LAI), and an empty column that we’ll fill in with heights. 
 [code]

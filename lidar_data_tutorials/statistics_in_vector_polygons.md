@@ -89,7 +89,7 @@ kdtree_las_xy = KDTree(np_las[:, :2])
 
 Now we’re ready to calculate our variables of interest. For each polygon:
 
-1. Do a range query to find the points with (x,y) coordinates near the polygon. I like to use a range that’s slightly larger than the minimum enclosing circle of the minimum bounding rectangle of the polygon, since it’s guaranteed to include each point in the polygon and also makes it more likely that we’ll include many ground returns. Here, we’ll use a buffer of 2 meters for the minimum enclosing circle.
+* Do a range query to find the points with (x,y) coordinates near the polygon. I like to use a range that’s slightly larger than the minimum enclosing circle of the minimum bounding rectangle of the polygon, since it’s guaranteed to include each point in the polygon and also makes it more likely that we’ll include many ground returns. Here, we’ll use a buffer of 2 meters for the minimum enclosing circle.
 {% highlight Python %}
 #"poly" is a row returned by GeoDataFrame.iterrows()
 search_radius_buffer = 2
@@ -99,7 +99,7 @@ poly_search_radius = search_radius_buffer + ((poly_mbr[2] - poly_mbr_centroid[0]
 near_poly_np_las = np_las[kdtree_las_xy.query_ball_point(poly_mbr_centroid, poly_search_radius)]
 {% endhighlight %}
 **TODO: picture of buffered MEC, MEC, MBR, and polygon**
-2. Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just work with theirs and not try to come up with our own. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and will accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
+* Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just work with theirs and not try to come up with our own. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and will accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
 {% highlight Python %}
 def get_height_above_ground_for_points(points):
     '''Estimate height above ground for a (ground-classified) point cloud, using TIN interpolation.
@@ -112,7 +112,7 @@ def get_height_above_ground_for_points(points):
 
 near_poly_np_las[:, 5] = get_height_above_ground_for_points(near_poly_np_las)
 {% endhighlight %}
-3. Now we’re ready to find the points which fall in our polygon. One approach for doing this that seems appealing is the [shapely.contains() method](https://shapely.readthedocs.io/en/latest/reference/shapely.contains.html#shapely.contains), since our polygons are already represented as shapely objects by GeoPandas. However, I’ve found that in practice it takes too long to convert an ndarray to a list of shapely points. What works better is to convert the polygon to a list or ndarray of coordinates, then run some other function for doing point-in-polygon tests. Here I'll use a function mostly lifted from Xiao (2016), but which doesn’t consider points intersecting polygons’ line segments or vertices. This works well enough for our purposes, but if you’d like more speed you can check out [this implementation of the winding number algorithm](https://github.com/sasamil/PointInPolygon_Py/blob/master/pointInside.py) which leverages Numba—as shown by [this stackexchange post](https://stackoverflow.com/a/48760556), Numba can make a huge difference here. For more on point-in-polygon tests, Xiao (2016) is again a good reference.
+* Now we’re ready to find the points which fall in our polygon. One approach for doing this that seems appealing is the [shapely.contains() method](https://shapely.readthedocs.io/en/latest/reference/shapely.contains.html#shapely.contains), since our polygons are already represented as shapely objects by GeoPandas. However, I’ve found that in practice it takes too long to convert an ndarray to a list of shapely points. What works better is to convert the polygon to a list or ndarray of coordinates, then run some other function for doing point-in-polygon tests. Here I'll use a function mostly lifted from Xiao (2016), but which doesn’t consider points intersecting polygons’ line segments or vertices. This works well enough for our purposes, but if you’d like more speed you can check out [this implementation of the winding number algorithm](https://github.com/sasamil/PointInPolygon_Py/blob/master/pointInside.py) which leverages Numba—as shown by [this stackexchange post](https://stackoverflow.com/a/48760556), Numba can make a huge difference here. For more on point-in-polygon tests, Xiao (2016) is again a good reference.
 {% highlight Python %}
 def point_in_polygon(point, polygon):
     '''Tests whether (x,y) coordinates of point is in polygon using ray tracing algorithm
@@ -138,12 +138,12 @@ poly_vertex_array = np.array(poly['geometry'].exterior.coords)
 in_poly_np_las = near_poly_np_las[[point_in_polygon(las_point, poly_vertex_array) for las_point in near_poly_np_las]]
 {% endhighlight %}
 **TODO?: picture, if we have time**
-4. From here, we can easily find the maximum height above ground.
+* From here, we can easily find the maximum height above ground.
 {% highlight Python %}
 #tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[~np.isnan(near_poly_np_las[:, 5]), 5]) #see text below for why we use ~np.isnan()
 tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[near_poly_np_las[:, 5], 5]) #see text below for why we use ~np.isnan()
 {% endhighlight %}
-5. LAI can also be easily calculated now. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
+* LAI can also be easily calculated now. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
 $$
 E = mc^2
 $$

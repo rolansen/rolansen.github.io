@@ -1,5 +1,5 @@
 **Title**
-**brief summary. Caveat about “lidar data” == discrete return aerial lidar point clouds**
+**brief summary. This can be applied to computing any sort of statistic or metric for polygon data. Caveat about “lidar data” == discrete return aerial lidar point clouds.**
 
 -----
 

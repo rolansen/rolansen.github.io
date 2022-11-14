@@ -14,14 +14,13 @@ This increase in the availability of lidar data has caused it to become more com
        width="600"
        height="397"
      />
-     <figcaption>Cloud Optimized Point Cloud rendered by QGIS. Image by Lutra Consulting.</figcaption>
+     <figcaption>Cloud Optimized Point Cloud rendered by QGIS. Image by Lutra Consulting.\n</figcaption>
   </figure>
 </div>
 
+However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on characteristics of these returns? What if we wanted to limit our data to returns which fall in certain classes in a land cover image? 
 
-However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on the returns corresponding to each polygon? What if we wanted to limit our data to returns which fall in certain classes in a land cover raster? 
-
-It seems relatively difficult to do these things with the software I listed above. R could be helpful here via the [lidR package](https://cran.r-project.org/web/packages/lidR/index.html). Another option is Python, which is perhaps more ubiquitous at this point and has the huge advantage of letting us work with point clouds as numpy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
+It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is helpful. Another option is Python, which is perhaps more ubiquitous at this point and has the huge advantage of letting us work with point clouds as numpy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
 
 The libraries that we’ll need are laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html), NumPy, SciPy, and GeoPandas. This may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
 
@@ -58,15 +57,15 @@ Let’s say we’ve got a set of polygons representing tree canopies and we want
        width="500"
        height="350"
      />
-     <figcaption>Polygons in green overlaying Bing imagery</figcaption>
+     <figcaption>Polygons in green overlaying Bing imagery\n</figcaption>
   </figure>
 </div>
 
-Aerial lidar can help us easily compute both of the variables we're interested in. The lidar we’ll work with is from a 2019 survey. We’ll just work with a single tile from this survey. USGS provides this dataset in laz format, and you can download it [here.](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz)
+Aerial lidar can help us easily compute both of the variables we're interested in. The data we’ll work with is a single tile from a 2019 survey. USGS provides this dataset in laz format, and you can download it [here.](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz)
 
 Both the lidar and the polygons use the coordinate reference system specified by EPSG:6350. 
 
-If we were to do something like this in practice, we’d probably be segmenting trees rather than working with polygons. I’ll go over how we can do this in a future post. Also, several of the polygons I drew will include some returns from rootftops. I’ll discuss how to handle that in the future, as well, but for now LAI estimates will be affected.
+If we were to do something like this in practice, we’d probably be segmenting trees rather than working with polygons. I’ll go over how we can do this in a future post. Also, several of the polygons I drew will include some returns from rootftops. I’ll discuss how to handle that in the future, as well, but for now a few LAI estimates will be affected.
 
 -----
 
@@ -94,13 +93,13 @@ scan_angle_factor = 0.006 #to convert from value given by las object, see https:
 las = laspy.read(fpath)
 np_las = np.transpose(np.vstack([las.x, las.y, las.z, las.classification, las.scan_angle*scan_angle_factor, np.zeros(len(las))]))
 {% endhighlight %}
-Note that the scan angle dimension doesn’t actually provide us with angles, and we need to multiply it by a factor to get the actual angle. See [this comment](https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998) for an in-depth explanation.
+Note that we need to multiply the scan angle dimension by a factor to get actual scan angles. See [this comment](https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998) for an in-depth explanation.
 In practice, we might want to make an array from more than one lidar file, in which case something like this could be helpful: 
 {% highlight Python %}
 np.append(np_las_1, np_las_2, axis=0)
 {% endhighlight%}
 
-Next, we’ll make a spatial index. k-D trees are popular spatial indexes for point clouds because they’re good for nearest neighbor queries (what are the n nearest neighbors?) and range queries (what are the neighbors within a distance r from some point?) on point datasets. Here we’ll use [scipy’s implementation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.KDTree.html). Since we’re only concerned with finding which returns have (x,y) coordinates that fall in polygons, we’ll just build the tree for those dimensions. For more on k-D trees, Xiao (2016) gives a great introduction for GIS folks. 
+Next, we’ll make a spatial index. k-D trees are popular spatial indexes for point clouds because they can efficiently answer nearest neighbor queries (what are the n nearest neighbors?) and range queries (what are the neighbors within a distance r from some point?) on point datasets. Here we’ll use [scipy’s implementation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.KDTree.html). Since we’re only concerned with finding which returns have (x,y) coordinates that fall in polygons, we’ll build the tree for just those dimensions. For more on k-D trees, Xiao (2016) gives a great introduction geared towards GIS folks. 
 {% highlight Python %}
 from scipy.spatial import KDTree
 kdtree_las_xy = KDTree(np_las[:, :2])

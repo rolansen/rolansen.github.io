@@ -190,7 +190,7 @@ tree_polys.to_file(output_path)
 {% endhighlight %}
 -----
 
-On my mid-end home desktop this all takes about a minute. We would have seen some performance gains from multithreading, since NumPy operations aren't constrained by Python's global interpreter lock. The same can be said of the SciPy methods used here. Multithreading would have been especially advantages if we had to read multiple laz files. As mentioned before, we could have made a more efficient point-in-polygon function, too.
+On my mid-end home desktop this all takes about a minute. We would have seen some performance gains from multithreading, since NumPy operations aren't constrained by Python's global interpreter lock. The same can be said of the SciPy methods used here. Multithreading would have been especially advantageous if we had to read multiple laz files. As mentioned before, we could have made a more efficient point-in-polygon function, too.
 
 If you’d like to reproduce exactly what we did here, here’s a [script](google.com) which puts together everything we did above. **TODO: actually link to script** I tried to keep things in the order we discuss them in this post, but in practice it would definitely make more sense to import our libraries at the start of the script, etc. I also put in some logic to deal with cases where polygons don't intersect any lidar returns. Again, the polygons can be found [here](link) **TODO: upload geojson** and the laz file [here](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz). 
 
@@ -204,6 +204,6 @@ References
 
 Jones, H. G. (2013). *Plants and microclimate: a quantitative approach to environmental plant physiology*. Cambridge university press.
 
-Richardson, Moskal, Kim (2009). Richardson, J. J., Moskal, L. M., & Kim, S. H. (2009). Modeling approaches to estimate effective leaf area index from aerial discrete-return LIDAR. *Agricultural and Forest Meteorology, 149*(6-7), 1152-1160.
+Richardson, J. J., Moskal, L. M., & Kim, S. H. (2009). Modeling approaches to estimate effective leaf area index from aerial discrete-return LIDAR. *Agricultural and Forest Meteorology, 149*(6-7), 1152-1160.
 
 Xiao, N. (2015). *GIS algorithms*. Sage.

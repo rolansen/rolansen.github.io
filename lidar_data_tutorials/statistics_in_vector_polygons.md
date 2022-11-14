@@ -1,11 +1,11 @@
-Title
-[brief summary. Caveat about “lidar data” == discrete return aerial lidar point clouds]
+"Title"
+"brief summary. Caveat about “lidar data” == discrete return aerial lidar point clouds"
 
 In the past few years free, high-quality lidar datasets have become much more common than they were a decade ago. A good portion of the planet now has at least one representative lidar survey. Surveys will become more widespread and regular, and quality will keep improving.
-This increase in the availability of lidar data has caused it to become more [widely used] in the GIS world. LAStools and PDAL are [in wide use by GIS professionals], and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
-[screenshot of recent QGIS release showing lidar support. Give credit to source, probably Lutra]
-However, tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. Say we wanted to identify the returns in or around features from a polygon layer, then compute a new field for this layer based on the returns corresponding to each polygon? What if we wanted to [{raster example. Limit returns to just those hitting certain classes in a land cover raster?}]? It seems relatively difficult to do these things with the tools I listed above. 
-R could be helpful here via the package lidR [link]. Another option is Python, which is more ubiquitous at this point and has the huge advantage of letting us work with point clouds as numpy arrays. Here, I’ll go over a hypothetical use case which will show how easy, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
+This increase in the availability of lidar data has caused it to become more "widely used" in the GIS world. LAStools and PDAL are "in wide use by GIS professionals", and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
+"screenshot of recent QGIS release showing lidar support. Give credit to source, probably Lutra"
+However, tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. Say we wanted to identify the returns in or around features from a polygon layer, then compute a new field for this layer based on the returns corresponding to each polygon? What if we wanted to ""raster example. Limit returns to just those hitting certain classes in a land cover raster?""? It seems relatively difficult to do these things with the tools I listed above. 
+R could be helpful here via the package [lidR](https://cran.r-project.org/web/packages/lidR/index.html). Another option is Python, which is perhaps more ubiquitous at this point and has the huge advantage of letting us work with point clouds as numpy arrays. Here, I’ll go over a hypothetical use case which will show how easy, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
 The libraries that we’ll need are laspy, the Python bindings for the Rust crate laz-rs (see the laspy installation instructions [link]), NumPy, SciPy, and GeoPandas. This may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
 
 $$

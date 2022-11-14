@@ -1,6 +1,6 @@
 ## Topics
 [Radiometric correction](/radiometric_correction/home.md)
 
-[Lidar data tutorials](https://google.com)
+[Lidar data tutorials](/lidar_data_tutorials/home.md)
 
-[Neutral landscape models](google.com)
+[Neutral landscape models](https://google.com)

@@ -1,4 +1,4 @@
-**Title**
+**TODO: Title**
 **brief summary. This can be applied to computing any sort of statistic or metric for polygon data. Caveat about “lidar data” == discrete return aerial lidar point clouds.**
 
 -----
@@ -26,7 +26,7 @@ To reproduce the code on this page, you'll need a Python environment which inclu
 
 -----
 
-Let’s consider a set of polygons representing tree canopies, and say that we want to compute each tree’s maximum height and its leaf area index (LAI). For this post I drew a set of polygons over tree canopies around [Soldier’s Circle](https://www.tclf.org/landscapes/soldiers-circle), a parkway in Buffalo, New York. The majority of these trees are American elms. I used Bing imagery as a reference. You can download the polygons in GeoJSON format [here](https://google.com). **TODO: make sure geojson's good, upload it to a "data" folder or something, and actually link to it**
+Let’s consider a set of polygons representing tree canopies, and say that we want to compute each tree’s maximum height and its leaf area index (LAI). For this post I drew a set of polygons over tree canopies around [Soldier’s Circle](https://www.tclf.org/landscapes/soldiers-circle), a parkway in Buffalo, New York. The majority of these trees are American elms. I used Bing imagery as a reference. You can download the polygons in GeoJSON format [here](https://github.com/rolansen/rolansen.github.io/blob/main/data/canopy_polygons.geojson).
 
 <div style="text-align: center">
   <figure>
@@ -192,7 +192,7 @@ tree_polys.to_file(output_path)
 
 On my mid-end home desktop this all takes about a minute. We would have seen some performance gains from multithreading, since NumPy operations aren't constrained by Python's global interpreter lock. The same can be said of the SciPy methods used here. Multithreading would have been especially advantageous if we had to read multiple laz files. As mentioned before, we could have made a more efficient point-in-polygon function, too.
 
-If you’d like to reproduce exactly what we did here, here’s a [script](google.com) which puts together everything we did above. **TODO: actually link to script** I tried to keep things in the order we discuss them in this post, but in practice it would definitely make more sense to import our libraries at the start of the script, etc. I also put in some logic to deal with cases where polygons don't intersect any lidar returns. Again, the polygons can be found [here](link) **TODO: upload geojson** and the laz file [here](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz). 
+If you’d like to reproduce exactly what we did here, here’s a [script](https://github.com/rolansen/rolansen.github.io/blob/main/code/find_height_and_lai_in_canopy_polys.py) which puts together everything we did above. I tried to keep things in the order we discuss them in this post, but in practice it would definitely make more sense to import our libraries at the start of the script, etc. I also put in some logic to deal with cases where polygons don't intersect any lidar returns. Again, the polygons can be found [here](https://github.com/rolansen/rolansen.github.io/blob/main/data/canopy_polygons.geojson) and the laz file [here](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz). 
 
 -----
 

@@ -51,6 +51,7 @@ First, let’s change directories to the folder in which we’re keeping the dat
 {% highlight Python %}
 #change directories and read polygons
 import geopandas as gpd
+import numpy as np
 import os
 
 os.chdir(r'your\directory')
@@ -68,7 +69,7 @@ import numpy as np
 lidar_filename = 'USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz'
 scan_angle_factor = 0.006 #to convert from value given by las object, see https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998.
 
-las = laspy.read(fpath)
+las = laspy.read(lidar_filename)
 np_las = np.transpose(np.vstack([las.x, las.y, las.z, las.classification, las.scan_angle*scan_angle_factor, np.zeros(len(las))]))
 {% endhighlight %}
 Note that we need to multiply the scan angle dimension by a factor to get actual scan angles. See [this comment](https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998) for an in-depth explanation.
@@ -157,7 +158,7 @@ in_poly_np_las = near_poly_np_las[[point_in_polygon(las_point, poly_vertex_array
 * From here, we can easily find the maximum height above ground.
 {% highlight Python %}
 #"index" is a row index from GeoDataFrame.iterrows()
-tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[near_poly_np_las[:, 5], 5]) #see text below for why we use ~np.isnan()
+tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[in_poly_np_las[:, 5], 5]) #see text below for why we use ~np.isnan()
 {% endhighlight %}
 * LAI can also be easily calculated at this point. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
 
@@ -178,7 +179,7 @@ ground_elev_threshold = 0.05 #in m
 
 total_number_of_returns_in_poly = len(in_poly_np_las)
 number_of_ground_returns_in_poly = np.sum(in_poly_np_las[:,5] <= ground_elev_threshold)
-mean_lidar_scanning_angle = np.rad2deg(np.mean(in_poly_np_las[:,4]))
+mean_lidar_scanning_angle = np.deg2rad(np.mean(in_poly_np_las[:,4]))
 tree_polys.at[index, 'lai'] = -np.cos(mean_lidar_scanning_angle) / lambert_beer_extinction_coefficient_when_scan_angle_is_0 * np.log(number_of_ground_returns_in_poly / total_number_of_returns_in_poly)
 {% endhighlight %}
 Note we consider a return to be a ground return if its height above ground is less than or equal to 5 cm.

@@ -62,7 +62,6 @@ tree_polys = gpd.read_file(tree_polys_filename)
 tree_polys['max_height'] = np.nan
 tree_polys['lai'] = np.nan
 {% endhighlight %}
-
 Next, we’ll read our lidar dataset and convert it to an ndarray. laspy makes it very easy to read lidar data, and while laspy’s LasData objects already represent point clouds as mdarrays (see the point.array attribute), I find that it’s often easier to just convert the dimensions of interest directly, since so many libraries are able to work with ndarrays. We want the [scaled versions of the x, y, and z dimensions](https://laspy.readthedocs.io/en/latest/intro.html#point-records), which aren’t included in LasData.point.array, so we’ll make a new ndarray which includes these dimensions, the class code dimension (which we’ll use to find heights above ground elevation), the scan angle (which we’ll use to calculate LAI), and an empty column that we’ll fill in with heights. 
 {% highlight Python %}
 import laspy
@@ -74,13 +73,17 @@ las = laspy.read(fpath)
 np_las = np.transpose(np.vstack([las.x, las.y, las.z, las.classification, las.scan_angle*scan_angle_factor, np.zeros(len(las))]))
 {% endhighlight %}
 Note that the scan angle dimension doesn’t actually provide us with angles, and we need to multiply it by a factor to get the actual angle. See [this comment](https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998) for an in-depth explanation.
-In practice, we might want to make an array from more than one lidar file, in which case something like this could be helpful: np.append(np_las_1, np_las_2, axis=0)
-{read lidar and convert to numpy. As an aside, mention that in practice we might want to make an array from more than one lidar file, in which case np.append can be helpful: np.append(np_las_1, np_las_2, axis=0). Explain why we “convert” to numpy array (laspy dimensions are numpy arrays, but it’ll be easier to just work with an ndarray directly).} 
+In practice, we might want to make an array from more than one lidar file, in which case something like this could be helpful: 
+{% highlight Python %}
+np.append(np_las_1, np_las_2, axis=0)
+{% endhighlight%}
 
-Next, we’ll make a spatial index. k-D trees are popular spatial indexes for point clouds because they’re good for nearest neighbor queries (what are the n nearest neighbors?) and range queries (what are the neighbors within a distance r from some point?) on point datasets. We’ll use scipy’s implementation [link]. Since we’re only concerned with finding which returns have (x,y) coordinates that fall in polygons, we’ll just build the tree for those dimensions. For more on k-D trees, Xiao (2016) gives a great introduction for GIS folks. 
-[code]
-[{picture of k-d tree. Take from Xiao, p 81?}]
-{kd-trees. Very briefly explain the idea, mention they’re popular for point clouds b/c of what they’re good at, mention Xiao (2016) as a good reference. Credit laspy documentation here. For this section, mention how we can use multithreading to make things faster for both kd-tree construction and numpy stuff, although we don’t do that here}
+Next, we’ll make a spatial index. k-D trees are popular spatial indexes for point clouds because they’re good for nearest neighbor queries (what are the n nearest neighbors?) and range queries (what are the neighbors within a distance r from some point?) on point datasets. Here we’ll use [scipy’s implementation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.KDTree.html). Since we’re only concerned with finding which returns have (x,y) coordinates that fall in polygons, we’ll just build the tree for those dimensions. For more on k-D trees, Xiao (2016) gives a great introduction for GIS folks. 
+{% highlight Python %}
+from scipy.spatial import KDTree
+kdtree_las_xy = KDTree(np_las[:, :2])
+{% endhighlight %}
+**TODO: picture of k-d tree. Take from Xiao, p 81?**
 
 Now we’re ready to calculate our variables of interest. For each polygon:
 1) Do a range query to find the points with (x,y) coordinates near the polygon. I like to use a range that’s slightly larger than the minimum enclosing circle of the minimum bounding rectangle of the polygon, since it’s guaranteed to include each point in the polygon and also makes it more likely that we’ll include many ground returns. Here, we’ll use a buffer of 2 meters for the minimum enclosing circle.

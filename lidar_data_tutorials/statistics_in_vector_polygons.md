@@ -4,7 +4,7 @@
 -----
 
 Free, high-quality lidar datasets have become much more common in the last few years than they were a decade ago. A good portion of the planet now has at least one representative lidar survey. In the future surveys will become more widespread and regular, and quality will keep improving.
-This increase in the availability of lidar data has caused it to become more commonly utilized in the GIS world. This trend has been **bolstered** by the awesome tools that are available nowadays. LAStools and PDAL are often used by GIS professionals, WhiteboxTools has great support for lidar data, and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
+This increase in the availability of lidar data has caused it to become more commonly utilized in the GIS world. **The trend** has been **bolstered** by the awesome tools that are available nowadays. LAStools and PDAL are often used by GIS professionals, WhiteboxTools has great support for lidar data, and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
 
 **screenshot of recent QGIS release showing lidar support. Give credit to source, probably Lutra**
 

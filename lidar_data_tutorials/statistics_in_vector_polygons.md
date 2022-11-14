@@ -183,7 +183,7 @@ tree_polys.at[index, 'lai'] = -np.cos(mean_lidar_scanning_angle) / lambert_beer_
 {% endhighlight %}
 Note we consider a return to be a ground return if its height above ground is less than or equal to 5 cm.
 
-When we're finished, we can write
+When we're finished, we can write the polygons with their new fields to a file:
 {% highlight Python %}
 output_path = 'canopy_polygons_with_height_and_lai.geojson'
 tree_polys.to_file(output_path)

@@ -47,7 +47,7 @@ Let’s say we’ve got a set of polygons representing tree canopies and we want
          width="500"
          height="350"
     />
-    <figcaption>Caption goes here</figcaption>
+    <figcaption>Caption goes hereeeee</figcaption>
   </figure>
 </div>
 

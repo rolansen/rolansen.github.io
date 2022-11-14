@@ -163,7 +163,7 @@ tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[near_poly_np_las[:, 5
 
 *I* = *I*₀ exp(-*kL*)
 
-Where *I* is the irradiance (i.e., radiant flux) at the ground surface [W m<sup>-2</sup>], *I*<sub>0</sub> is the irradiance at the top of the canopy, *L* is LAI, and *k* is an “extinction coefficient” representing the ratio of the area of shadows cast by leaves to the actual area of the leaves (Jones, 2013). Solving for LAI gives 
+Where *I* is the irradiance (i.e., radiant flux) at the ground surface [W m^-2], *I*<sub>0</sub> is the irradiance at the top of the canopy, *L* is LAI, and *k* is an “extinction coefficient” representing the ratio of the area of shadows cast by leaves to the actual area of the leaves (Jones, 2013). Solving for LAI gives 
 
 *L* = ln(*I* / *I*₀) / *k*.
 

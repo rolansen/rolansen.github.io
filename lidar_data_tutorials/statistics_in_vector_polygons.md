@@ -5,7 +5,7 @@
 
 Free, high-quality lidar datasets have become much more common in the last few years than they were a decade ago. A good portion of the planet now has at least one representative lidar survey. In the future surveys will become more widespread and regular, and quality will keep improving.
 
-This increase in the availability of lidar data has caused it to become more commonly utilized in the GIS world, a trend which has been bolstered by the awesome tools that are available to the community nowadays. LAStools and PDAL are specialized software suites that are now often used by GIS professionals, WhiteboxTools has great support for lidar data, and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
+This increase in the availability of lidar data has caused it to become more commonly utilized in the GIS world, a trend which has been bolstered by the great tools that are available to the community nowadays. LAStools and PDAL are specialized software suites that are now often used by GIS professionals, WhiteboxTools has great support for lidar data, and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
 
 <div style="text-align: center">
   <figure>
@@ -20,7 +20,7 @@ This increase in the availability of lidar data has caused it to become more com
 
 However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on characteristics of these returns? What if we wanted to limit our data to returns which fall in certain classes in a land cover image? 
 
-It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is helpful. Another option is Python, which is perhaps more ubiquitous at this point and has the huge advantage of letting us work with point clouds as numpy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
+It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is helpful. Another option is Python, which is perhaps more ubiquitous at this point and has the huge advantage of letting us work with point clouds as NumPy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
 
 The libraries that we’ll need are laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html), NumPy, SciPy, and GeoPandas. This may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
 
@@ -99,7 +99,7 @@ In practice, we might want to make an array from more than one lidar file, in wh
 np.append(np_las_1, np_las_2, axis=0)
 {% endhighlight%}
 
-Next, we’ll make a spatial index. k-D trees are popular spatial indexes for point clouds because they can efficiently answer nearest neighbor queries (what are the n nearest neighbors?) and range queries (what are the neighbors within a distance r from some point?) on point datasets. Here we’ll use [scipy’s implementation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.KDTree.html). Since we’re only concerned with finding which returns have (x,y) coordinates that fall in polygons, we’ll build the tree for just those dimensions. For more on k-D trees, Xiao (2016) gives a great introduction geared towards GIS folks. 
+Next, we’ll make a spatial index. k-D trees are popular spatial indexes for point clouds because they can efficiently answer nearest neighbor queries (what are the n nearest neighbors?) and range queries (what are the neighbors within a distance r from some point?) on point datasets. Here we’ll use [scipy’s implementation.](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.KDTree.html) Since we’re only concerned with finding which returns have (x,y) coordinates that fall in polygons, we’ll build the tree for just those dimensions. For more on k-D trees, Xiao (2016) gives a nice introduction that's geared towards GIS folks. 
 {% highlight Python %}
 from scipy.spatial import KDTree
 kdtree_las_xy = KDTree(np_las[:, :2])
@@ -138,7 +138,7 @@ near_poly_np_las = np_las[kdtree_las_xy.query_ball_point(poly_mbr_centroid, poly
   </figure>
 </div>\
 
-* Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just work with theirs and not try to come up with our own. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and will accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
+* Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just work with theirs and not try to come up with our own. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and should be accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
 {% highlight Python %}
 def get_height_above_ground_for_points(points):
     '''Estimate height above ground for a (ground-classified) point cloud, using TIN interpolation.
@@ -151,7 +151,7 @@ def get_height_above_ground_for_points(points):
 
 near_poly_np_las[:, 5] = get_height_above_ground_for_points(near_poly_np_las)
 {% endhighlight %}
-* Now we’re ready to find the points which fall in our polygon. One approach for doing this that seems appealing is the [shapely.contains() method](https://shapely.readthedocs.io/en/latest/reference/shapely.contains.html#shapely.contains), since our polygons are already represented as shapely objects by GeoPandas. However, I’ve found that in practice it takes too long to convert an ndarray to a list of shapely points. What works better is to convert the polygon to a list or ndarray of coordinates, then run some other function for doing point-in-polygon tests. Here I'll use a function mostly lifted from Xiao (2016), but which doesn’t consider points intersecting polygons’ line segments or vertices. This works well enough for our purposes, but if you’d like more speed you can check out [this implementation of the winding number algorithm](https://github.com/sasamil/PointInPolygon_Py/blob/master/pointInside.py) which leverages Numba—as shown by [this stackexchange post](https://stackoverflow.com/a/48760556), Numba can make a huge difference here. For more on point-in-polygon tests, Xiao (2016) is again a good reference.
+* Now we’re ready to find the points which fall in our polygon. One approach for doing this that seems appealing is the [shapely.contains() method](https://shapely.readthedocs.io/en/latest/reference/shapely.contains.html#shapely.contains), since our polygons are already represented as shapely objects by GeoPandas. However, I’ve found that in practice it takes too long to convert an ndarray to a list of shapely points. What works better is to convert the polygon to a list or ndarray of coordinates, then run some other function for doing point-in-polygon tests. Here I'll use a function mostly lifted from Xiao (2016), but which for simplicity's sake doesn’t consider points intersecting polygons’ line segments or vertices. This works well enough for our purposes, but if you’d like more generality and speed you can check out [this implementation of the winding number algorithm which leverages Numba](https://github.com/sasamil/PointInPolygon_Py/blob/master/pointInside.py)—as shown by [this stackexchange post](https://stackoverflow.com/a/48760556), Numba can make a huge difference here. For more on point-in-polygon tests, Xiao (2016) is again a good reference.
 {% highlight Python %}
 def point_in_polygon(point, polygon):
     '''Tests whether (x,y) coordinates of point is in polygon using ray tracing algorithm
@@ -176,19 +176,18 @@ def point_in_polygon(point, polygon):
 poly_vertex_array = np.array(poly['geometry'].exterior.coords)
 in_poly_np_las = near_poly_np_las[[point_in_polygon(las_point, poly_vertex_array) for las_point in near_poly_np_las]]
 {% endhighlight %}
-**TODO?: picture, if we have time**
 * From here, we can easily find the maximum height above ground.
 {% highlight Python %}
 #tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[~np.isnan(near_poly_np_las[:, 5]), 5]) #see text below for why we use ~np.isnan()
 tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[near_poly_np_las[:, 5], 5]) #see text below for why we use ~np.isnan()
 {% endhighlight %}
-* LAI can also be easily calculated now. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
+* LAI can also be easily calculated at this point. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
 $$
 E = mc^2
 $$
 Where I is the irradiance (i.e., radiant flux) at the ground surface [W m^-2], I_0 is the irradiance at the top of the canopy, L is the leaf area index, and k is an “extinction coefficient” representing the ratio of the area of shadows cast by leaves to the actual area of the leaves (Jones, 2013). Solving for LAI gives us
 L = -1/k * ln(I / I_0).
-For a spherical leaf angle distribution, meaning all leaves have a uniform probability for all angles from the horizontal plane (zenith angles %theta%) %in% [0°, 90°], we have k = 0.5. Following Richardson et. al. (2009), we’ll substitute I with the total number of ground returns R_g and I_0 with the total number of returns in the polygon R_t, and also model the effects of lidar scanning angle using Lambert’s cosine law I = I_0*cos(%theta%). This gives us the model:
+For a spherical leaf angle distribution, meaning all leaves have a uniform probability for all angles from the horizontal plane (zenith angles $\theta$) %in% [0°, 90°], we have k = 0.5. Following Richardson et. al. (2009), we’ll substitute I with the total number of ground returns R_g and I_0 with the total number of returns in the polygon R_t, and also model the effects of lidar scanning angle using Lambert’s cosine law I = I_0*cos(%theta%). This gives us the model:
 L = -cos(%mean_theta_lidar%) / 0.5 * ln(R_g/R_t)
 Where %mean_theta_lidar% is the mean lidar scanning angle of all returns in the polygon. Here’s the code for implementing this model:
 {% highlight Python %}

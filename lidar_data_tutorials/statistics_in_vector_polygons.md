@@ -1,6 +1,6 @@
 **This is the first of a series of tutorials I'm writing on using Python to do interesting things that mix lidar data and other types of GIS datasets. By "lidar data" I mean discrete return aerial lidar point clouds.**
 
-**In this post, I describe a use case demonstrating how to identify lidar returns which have some spatial relationship to vector (polygon) data. Once we do this, it's easy to compute any sort of statistic or metric, then assign the values to some new field in the vector dataset.**
+**In this post, I describe a use case demonstrating how to identify lidar returns which have some spatial relationship to vector data. Once we do this, it's easy to compute any sort of statistic or metric, then assign the values to some new field in the vector dataset.**
 
 -----
 

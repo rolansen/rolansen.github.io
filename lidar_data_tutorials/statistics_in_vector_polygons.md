@@ -18,8 +18,7 @@ This increase in the availability of lidar data has caused it to become more com
   </figure>
 </div>
 
-
-However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on characteristics of these returns? What if we wanted to limit our data to returns which fall in certain classes in a land cover image? 
+\However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on characteristics of these returns? What if we wanted to limit our data to returns which fall in certain classes in a land cover image? 
 
 It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is helpful. Another option is Python, which is perhaps more ubiquitous at this point and has the huge advantage of letting us work with point clouds as NumPy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
 
@@ -62,8 +61,7 @@ Let’s say we’ve got a set of polygons representing tree canopies and we want
   </figure>
 </div>
 
-
-Aerial lidar can help us easily compute both of the variables we're interested in. The data we’ll work with is a single tile from a 2019 survey. USGS provides this dataset in laz format, and you can download it [here.](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz)
+\Aerial lidar can help us easily compute both of the variables we're interested in. The data we’ll work with is a single tile from a 2019 survey. USGS provides this dataset in laz format, and you can download it [here.](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz)
 
 Both the lidar and the polygons use the coordinate reference system specified by EPSG:6350. 
 
@@ -118,8 +116,7 @@ kdtree_las_xy = KDTree(np_las[:, :2])
   </figure>
 </div>
 
-
-Now we’re ready to calculate our variables of interest. For each polygon:
+\Now we’re ready to calculate our variables of interest. For each polygon:
 
 * Do a range query to find the points with (x,y) coordinates near the polygon. I like to use a range that’s slightly larger than the minimum enclosing circle of the minimum bounding rectangle of the polygon, since it’s guaranteed to include each point in the polygon and also makes it less likely that we won't include many ground returns. Here, we’ll use a buffer of 2 meters for the minimum enclosing circle.
 {% highlight Python %}
@@ -141,8 +138,7 @@ near_poly_np_las = np_las[kdtree_las_xy.query_ball_point(poly_mbr_centroid, poly
   </figure>
 </div>
 
-
-* Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just work with theirs and not try to come up with our own. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and should be accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
+* \Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just work with theirs and not try to come up with our own. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and should be accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
 {% highlight Python %}
 def get_height_above_ground_for_points(points):
     '''Estimate height above ground for a (ground-classified) point cloud, using TIN interpolation.

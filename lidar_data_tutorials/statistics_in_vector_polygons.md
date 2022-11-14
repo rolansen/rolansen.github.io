@@ -161,7 +161,7 @@ tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[near_poly_np_las[:, 5
 {% endhighlight %}
 * LAI can also be easily calculated at this point. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
 
-*I* = *I*₀exp(-*kL*)
+*I* = *I*₀ exp(-*kL*)
 
 Where *I* is the irradiance (i.e., radiant flux) at the ground surface [W m<sup>-2</sup>], *I*<sub>0</sub> is the irradiance at the top of the canopy, *L* is LAI, and *k* is an “extinction coefficient” representing the ratio of the area of shadows cast by leaves to the actual area of the leaves (Jones, 2013). Solving for LAI gives 
 
@@ -169,16 +169,16 @@ Where *I* is the irradiance (i.e., radiant flux) at the ground surface [W m<sup>
 
 For a spherical leaf angle distribution, meaning all leaves have a uniform probability for any zenith angle *&theta;* &isin; [0°, 90°], we have *k* = 0.5. Following Richardson et. al. (2009), we’ll substitute *I* with the total number of returns reaching the ground surface *R*ₛ and *I*<sub>0</sub> with the total number of returns in the polygon *R*ₜ, and also model the effects of lidar scanning angle using Lambert’s cosine law *I* = *I*₀cos(*&theta;*). This gives us the model:
 
-L = -2cos(%mean_theta_lidar%)ln(*R*ₛ/*R*ₜ)
+L = -2cos(&Theta;) ln(*R*ₛ/*R*ₜ)
 
-Where %mean_theta_lidar% is the mean lidar scanning angle of all returns in the polygon. Here’s the code for implementing this model:
+Where &Theta; is the mean lidar scanning angle of all returns in the polygon. Here’s the code for implementing this model:
 {% highlight Python %}
 lambert_beer_extinction_coefficient_when_scan_angle_is_0 = 0.5 #assumes spherical leaf angle distribution.
 ground_elev_threshold = 0.05 #in m
 
 total_number_of_returns_in_poly = len(in_poly_np_las)
 number_of_ground_returns_in_poly = np.sum(in_poly_np_las[:,5] <= ground_elev_threshold)
-mean_lidar_scanning_angle = np.mean(in_poly_np_las[:,4])
+mean_lidar_scanning_angle = np.rad2deg(np.mean(in_poly_np_las[:,4]))
 tree_polys.at[index, 'lai'] = -np.cos(mean_lidar_scanning_angle) / lambert_beer_extinction_coefficient_when_scan_angle_is_0 * np.log(number_of_ground_returns_in_poly / total_number_of_returns_in_poly)
 {% endhighlight %}
 Note we consider a return to be a ground return if its height above ground is less than or equal to 5 cm.

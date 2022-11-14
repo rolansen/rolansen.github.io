@@ -1,5 +1,6 @@
-**TODO: Title**
-**brief summary. This can be applied to computing any sort of statistic or metric for polygon data. Caveat about “lidar data” == discrete return aerial lidar point clouds.**
+**This is the first of a series of tutorials I'm writing on using Python to do interesting things that mix lidar data and other types of GIS datasets. By "lidar data" I mean discrete return aerial lidar point clouds.**
+
+**In this post, I describe a use case demonstrating how to identify lidar returns which have some spatial relationship to vector (polygon) data. Once we do this, it's easy to compute any sort of statistic or metric, then assign the values to some new field in the vector dataset.**
 
 -----
 
@@ -41,7 +42,7 @@ Let’s consider a set of polygons representing tree canopies, and say that we w
 
 Aerial lidar can help us easily compute both of the variables we're interested in. We’ll work with data from a single tile, collected during a 2019 survey. USGS provides this dataset in laz format, and you can download it [here.](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz)
 
-Both the lidar and the polygons use the coordinate reference system specified by EPSG:6350. 
+Both the lidar and the polygons use the coordinate reference system specified by EPSG:6350. The code below assumes both datasets are in the same directory.
 
 If we were to do something like this in practice, we’d probably be segmenting trees rather than working with polygons. I’ll go over how we can do this in a future post. Also, several of the polygons I drew will include some returns from rootftops. I’ll discuss how to handle that in the future, as well, but for now a few LAI estimates will be affected.
 
@@ -49,7 +50,6 @@ If we were to do something like this in practice, we’d probably be segmenting 
 
 First, let’s change directories to the folder in which we’re keeping the data, read our polygon layer as a GeoDataFrame, and instantiate fields for the we’re interested in:
 {% highlight Python %}
-#change directories and read polygons
 import geopandas as gpd
 import numpy as np
 import os
@@ -171,7 +171,7 @@ For a spherical leaf angle distribution, meaning all leaves have a uniform proba
 
 L = -cos(&Theta;) ln(*R*ₛ/*R*ₜ) / 0.5,
 
-Where &Theta; is the mean lidar scanning angle of all returns in the polygon. Here’s the code for implementing this model:
+Where &Theta; is the mean lidar scanning angle of all returns in the polygon. Here’s some code which implements this model:
 {% highlight Python %}
 lambert_beer_extinction_coefficient_when_scan_angle_is_0 = 0.5 #assumes spherical leaf angle distribution.
 ground_elev_threshold = 0.05 #in m

@@ -156,7 +156,7 @@ in_poly_np_las = near_poly_np_las[[point_in_polygon(las_point, poly_vertex_array
 {% endhighlight %}
 * From here, we can easily find the maximum height above ground.
 {% highlight Python %}
-#tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[~np.isnan(near_poly_np_las[:, 5]), 5]) #see text below for why we use ~np.isnan()
+#"index" is a row index from GeoDataFrame.iterrows()
 tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[near_poly_np_las[:, 5], 5]) #see text below for why we use ~np.isnan()
 {% endhighlight %}
 * LAI can also be easily calculated at this point. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
@@ -182,6 +182,13 @@ mean_lidar_scanning_angle = np.rad2deg(np.mean(in_poly_np_las[:,4]))
 tree_polys.at[index, 'lai'] = -np.cos(mean_lidar_scanning_angle) / lambert_beer_extinction_coefficient_when_scan_angle_is_0 * np.log(number_of_ground_returns_in_poly / total_number_of_returns_in_poly)
 {% endhighlight %}
 Note we consider a return to be a ground return if its height above ground is less than or equal to 5 cm.
+
+When we're finished, we can write
+{% highlight Python %}
+output_path = 'canopy_polygons_with_height_and_lai.geojson'
+tree_polys.to_file(output_path)
+{% endhighlight %}
+-----
 
 **TODO: Explain results (run time, etc), make some comments, show some pictures.**
 

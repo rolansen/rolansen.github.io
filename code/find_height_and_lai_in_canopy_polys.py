@@ -3,7 +3,7 @@ import geopandas as gpd
 import numpy as np
 import os
 
-os.chdir(r'D:\HeDemo\data\final')
+os.chdir(r'your\directory')
 tree_polys_filename = 'canopy_polygons.geojson'
 
 tree_polys = gpd.read_file(tree_polys_filename)

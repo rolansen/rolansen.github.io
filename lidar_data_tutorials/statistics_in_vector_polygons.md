@@ -1,14 +1,14 @@
-"Title"
-"brief summary. Caveat about “lidar data” == discrete return aerial lidar point clouds"
+**Title**
+**brief summary. Caveat about “lidar data” == discrete return aerial lidar point clouds**
 
 -----
 
 Free, high-quality lidar datasets have become much more common in the last few years than they were a decade ago. A good portion of the planet now has at least one representative lidar survey. In the future surveys will become more widespread and regular, and quality will keep improving.
-This increase in the availability of lidar data has caused it to become more commonly utilized in the GIS world. This trend has been "bolstered" by the awesome tools that are available nowadays. LAStools and PDAL are often used by GIS professionals, WhiteboxTools has great support for lidar data, and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
+This increase in the availability of lidar data has caused it to become more commonly utilized in the GIS world. This trend has been **bolstered** by the awesome tools that are available nowadays. LAStools and PDAL are often used by GIS professionals, WhiteboxTools has great support for lidar data, and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
 
-"screenshot of recent QGIS release showing lidar support. Give credit to source, probably Lutra"
+**screenshot of recent QGIS release showing lidar support. Give credit to source, probably Lutra**
 
-However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on the returns corresponding to each polygon? What if we wanted to limit lidar data to returns which fall in certain classes in a land cover raster? 
+However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on the returns corresponding to each polygon? What if we wanted to limit our data to returns which fall in certain classes in a land cover raster? 
 
 It seems relatively difficult to do these things with the software I listed above. R could be helpful here via the [lidR package](https://cran.r-project.org/web/packages/lidR/index.html). Another option is Python, which is perhaps more ubiquitous at this point and has the huge advantage of letting us work with point clouds as numpy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
 

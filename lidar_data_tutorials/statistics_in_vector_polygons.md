@@ -14,9 +14,9 @@ This increase in the availability of lidar data has caused it to become more com
        width="600"
        height="397"
      />
-     <figcaption>Cloud Optimized Point Cloud rendered by QGIS. Image by Lutra Consulting.\n</figcaption>
+     <figcaption>Cloud Optimized Point Cloud rendered by QGIS. Image by Lutra Consulting.</figcaption>
   </figure>
-</div>
+</div>\
 
 However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on characteristics of these returns? What if we wanted to limit our data to returns which fall in certain classes in a land cover image? 
 

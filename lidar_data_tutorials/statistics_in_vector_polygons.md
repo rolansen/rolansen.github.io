@@ -15,8 +15,16 @@ It seems relatively difficult to do these things with the software I listed abov
 The libraries that we’ll need are laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html), NumPy, SciPy, and GeoPandas. This may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
 
 $$
+  \tilde{y} \sim N(\tilde{\mu}, Q^{-1}),
+$$
+
+test1
+
+$$
 \sqrt{3}
 $$
+
+test2
 
 $$
 E = mc^2

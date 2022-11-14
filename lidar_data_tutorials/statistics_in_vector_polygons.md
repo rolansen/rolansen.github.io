@@ -1,6 +1,8 @@
 "Title"
 "brief summary. Caveat about “lidar data” == discrete return aerial lidar point clouds"
 
+-----
+
 In the past few years free, high-quality lidar datasets have become much more common than they were a decade ago. A good portion of the planet now has at least one representative lidar survey. Surveys will become more widespread and regular, and quality will keep improving.
 This increase in the availability of lidar data has caused it to become more "widely used" in the GIS world. LAStools and PDAL are "in wide use by GIS professionals", and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
 

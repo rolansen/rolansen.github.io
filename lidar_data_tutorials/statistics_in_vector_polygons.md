@@ -104,7 +104,17 @@ Next, we’ll make a spatial index. k-D trees are popular spatial indexes for po
 from scipy.spatial import KDTree
 kdtree_las_xy = KDTree(np_las[:, :2])
 {% endhighlight %}
-**TODO: picture of k-d tree. Take from Xiao, p 81?**
+
+<div style="text-align: center">
+  <figure>
+      <img
+       src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Kdtree_2d.svg/1024px-Kdtree_2d.svg.png"
+       width="400"
+       height="400"
+     />
+     <figcaption>Depiction of k-d tree for a two-dimensional dataset. From Wikipedia.\n</figcaption>
+  </figure>
+</div>
 
 Now we’re ready to calculate our variables of interest. For each polygon:
 

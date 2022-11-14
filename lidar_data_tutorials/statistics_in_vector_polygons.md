@@ -20,6 +20,10 @@ $$
   \tilde{y} \sim N(\tilde{\mu}, Q^{-1}),
 $$
 
+```math
+\sqrt{3x-1}+(1+x)^2
+```
+
 test1
 
 $$

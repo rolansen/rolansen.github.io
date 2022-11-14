@@ -364,7 +364,7 @@ ahm <- function(aoi_poly, aerial_path, sat_paths,
     #if (row==200) {remove(interpolated_matched_image_mosaic);break} #TODO: drop this
     
     #mosaicing is making things take too long. let's build write a tif for each file
-    #then make a vrt or something
+    #then make a vrt 
     out_path_for_cell <- file.path(scratch_dir_path, paste('match', interp_cell$interp_id, '.tif', sep=''))
     writeRaster(interpolated_matched_image, out_path_for_cell, overwrite=TRUE)
   }

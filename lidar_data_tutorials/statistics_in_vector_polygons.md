@@ -184,9 +184,9 @@ in_poly_np_las = near_poly_np_las[[point_in_polygon(las_point, poly_vertex_array
 tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[near_poly_np_las[:, 5], 5]) #see text below for why we use ~np.isnan()
 {% endhighlight %}
 * LAI can also be easily calculated at this point. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
-$$
-I = I_0*exp(-kL)
-$$
+
+*I* = *I*₀exp(-kL)
+
 Where *I* is the irradiance (i.e., radiant flux) at the ground surface [W m<sup>-2</sup>], *I*<sub>0</sub> is the irradiance at the top of the canopy, *L* is LAI, and *k* is an “extinction coefficient” representing the ratio of the area of shadows cast by leaves to the actual area of the leaves (Jones, 2013). Solving for LAI gives us
 L = -1/k * ln(I / I_0).
 For a spherical leaf angle distribution, meaning all leaves have a uniform probability for any zenith angle *&theta;* &isin; [0°, 90°], we have *k* = 0.5. Following Richardson et. al. (2009), we’ll substitute *I* with the total number of ground returns *R*<sub>g</sub> and *I*<sub>0</sub> with the total number of returns in the polygon *R*<sub>t</sub>, and also model the effects of lidar scanning angle using Lambert’s cosine law *I* = *I*<sub>0</sub>cos(*&theta;*). This gives us the model:

@@ -60,7 +60,7 @@ Now we’re ready to calculate our variables of interest. For each polygon:
 $$
   I 
   = 
-  I_0 * exp(-kL). 
+  2. 
 $$
 Where I is the irradiance (i.e., radiant flux) at the ground surface [W m^-2], I_0 is the irradiance at the top of the canopy, L is the leaf area index, and k is an “extinction coefficient” representing the ratio of the area of shadows cast by leaves to the actual area of the leaves (Jones, 2013). Solving for LAI gives us
 L = -1/k * ln(I / I_0).

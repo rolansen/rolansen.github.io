@@ -40,9 +40,9 @@ $$
 
 Let’s say we’ve got a set of polygons representing tree canopies and we want to compute each tree’s maximum height and its leaf area index (LAI). For this post I drew a set of polygons over tree canopies around [Soldier’s Circle](https://www.tclf.org/landscapes/soldiers-circle), a parkway in Buffalo, New York. The majority of these trees are American elms. I used Bing imagery as a reference. You can download the polygons in GeoJSON format [here](https://google.com). **TODO: make sure geojson's good, upload it to an "assets" folder or something, and actually link to it**
 
-[Google StreetView screenshot, hollow-fill polygons over Bing imagery].
+**TODO: Google StreetView screenshot, hollow-fill polygons over Bing imagery.**
 
-Aerial lidar can help us easily compute both of the variables we're interested in. The lidar we’ll work with is from a 2019 survey. Here we’ll just use a single tile. USGS provides this data in laz format, and you can download it here [link].
+Aerial lidar can help us easily compute both of the variables we're interested in. The lidar we’ll work with is from a 2019 survey. Here we’ll just use a single tile. USGS provides this data in laz format, and you can download it [here](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz).
 
 Both the lidar and the polygons use the coordinate reference system specified by EPSG:6350. 
 
@@ -86,17 +86,18 @@ kdtree_las_xy = KDTree(np_las[:, :2])
 **TODO: picture of k-d tree. Take from Xiao, p 81?**
 
 Now we’re ready to calculate our variables of interest. For each polygon:
-1) Do a range query to find the points with (x,y) coordinates near the polygon. I like to use a range that’s slightly larger than the minimum enclosing circle of the minimum bounding rectangle of the polygon, since it’s guaranteed to include each point in the polygon and also makes it more likely that we’ll include many ground returns. Here, we’ll use a buffer of 2 meters for the minimum enclosing circle.
+
+1. Do a range query to find the points with (x,y) coordinates near the polygon. I like to use a range that’s slightly larger than the minimum enclosing circle of the minimum bounding rectangle of the polygon, since it’s guaranteed to include each point in the polygon and also makes it more likely that we’ll include many ground returns. Here, we’ll use a buffer of 2 meters for the minimum enclosing circle.
 [code]
 [picture of buffered MEC, MEC, MBR, and polygon]
-2) Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just use theirs. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and will accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
+2. Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just use theirs. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and will accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
 [code]
-3) Now we’re ready to find the points which fall in our polygon. One approach for doing this that seems appealing is the shapely.contains() method [link shapely.contains — Shapely 2.0b2 documentation], since our polygons are already represented as shapely objects by GeoPandas. However, I’ve found that it takes too long to convert an ndarray to a list of shapely points. What works better is to convert the polygon to a list or ndarray of coordinates, then use some other function for doing point-in-polygon tests. Here I’ll use a function mostly lifted from Xiao (2016), but which doesn’t consider returns intersecting polygons’ line segments or vertices. This works well enough for our purposes, but if you’d like more speed you can check out this implementation of the winding number algorithm [link] which leverages numba—as shown by this stackexchange post [link], this can make a huge difference. For more on point-in-polygon tests, Xiao (2016) is again a good reference.
+3. Now we’re ready to find the points which fall in our polygon. One approach for doing this that seems appealing is the shapely.contains() method [link shapely.contains — Shapely 2.0b2 documentation], since our polygons are already represented as shapely objects by GeoPandas. However, I’ve found that it takes too long to convert an ndarray to a list of shapely points. What works better is to convert the polygon to a list or ndarray of coordinates, then use some other function for doing point-in-polygon tests. Here I’ll use a function mostly lifted from Xiao (2016), but which doesn’t consider returns intersecting polygons’ line segments or vertices. This works well enough for our purposes, but if you’d like more speed you can check out this implementation of the winding number algorithm [link] which leverages numba—as shown by this stackexchange post [link], this can make a huge difference. For more on point-in-polygon tests, Xiao (2016) is again a good reference.
 [code]
 [picture, if we have time]
-4) From here, we can easily find the maximum height above ground.
+4. From here, we can easily find the maximum height above ground.
 [code]
-5) LAI can also be easily calculated now. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
+5. LAI can also be easily calculated now. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
 $$
 E = mc^2
 $$

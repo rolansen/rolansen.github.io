@@ -38,16 +38,18 @@ $$
 
 -----
 
-Let’s say we’ve got a set of polygons representing tree canopies and we want to compute each tree’s maximum height and its leaf area index (LAI). For this post I drew a set of polygons over tree canopies around [Soldier’s Circle](https://www.tclf.org/landscapes/soldiers-circle), a parkway in Buffalo, New York. The majority of these trees are American elms. I used Bing imagery as a reference; in the image below you can see the polygons in green overlaying Bing imagery. You can download the polygons in GeoJSON format [here](https://google.com). **TODO: make sure geojson's good, upload it to an "assets" folder or something, and actually link to it**
+Let’s say we’ve got a set of polygons representing tree canopies and we want to compute each tree’s maximum height and its leaf area index (LAI). For this post I drew a set of polygons over tree canopies around [Soldier’s Circle](https://www.tclf.org/landscapes/soldiers-circle), a parkway in Buffalo, New York. The majority of these trees are American elms. I used Bing imagery as a reference. You can download the polygons in GeoJSON format [here](https://google.com). **TODO: make sure geojson's good, upload it to an "assets" folder or something, and actually link to it**
 
 <div style="text-align: center">
-  <img
-    src="/assets/tree_polygons_over_bing_imagery.png"
-    width="500"
-    height="350"
-  />
+  <figure>
+      <img
+       src="/assets/tree_polygons_over_bing_imagery.png"
+       width="500"
+       height="350"
+     />
+     <figcaption>Polygons in green overlaying Bing imagery</figcaption>
+  </figure>
 </div>
-
 
 Aerial lidar can help us easily compute both of the variables we're interested in. The lidar we’ll work with is from a 2019 survey. Here we’ll just use a single tile. USGS provides this data in laz format, and you can download it [here](https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/projects/NY_3County_2019_A19/NY_3County_2019/LAZ/USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz).
 

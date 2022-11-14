@@ -167,7 +167,7 @@ Where *I* is the irradiance (i.e., radiant flux) at the ground surface [W m^-2],
 
 *L* = ln(*I* / *I*₀) / *k*.
 
-For a spherical leaf angle distribution, meaning all leaves have a uniform probability for any zenith angle *&theta;* &isin; [0°, 90°], we have *k* = 0.5. Following Richardson et. al. (2009), we’ll substitute *I* with the total number of returns reaching the ground surface *R*ₛ and *I*<sub>0</sub> with the total number of returns in the polygon *R*ₜ, and also model the effects of lidar scanning angle using Lambert’s cosine law *I* = *I*₀cos(*&theta;*). This gives us the model:
+For a spherical leaf angle distribution, meaning all leaves have a uniform probability for any zenith angle *&theta;* &isin; [0°, 90°], we have *k* = 0.5. Following Richardson et. al. (2009), we’ll substitute *I* with the total number of returns reaching the ground surface *R*ₛ and *I*₀ with the total number of returns in the polygon *R*ₜ, and also model the effects of lidar scanning angle using Lambert’s cosine law *I* = *I*₀cos(*&theta;*). This gives us the model:
 
 L = -2cos(&Theta;) ln(*R*ₛ/*R*ₜ)
 

@@ -46,7 +46,6 @@ Let’s say we’ve got a set of polygons representing tree canopies and we want
     width="500"
     height="350"
   />
-  heres some text
 </div>
 
 

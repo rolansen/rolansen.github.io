@@ -58,6 +58,7 @@ import os
 
 os.chdir(r'D:\HeDemo\data')
 tree_polys_filename = 'soldiers_circle_tree_polys_epsg6350.geojson'
+
 tree_polys = gpd.read_file(tree_polys_filename)
 tree_polys['max_height'] = np.nan
 tree_polys['lai'] = np.nan
@@ -69,6 +70,7 @@ import numpy as np
 
 lidar_filename = r'D:\HeDemo\data\lidar\USGS_LPC_NY_3County_2019_A19_e1382n2339_2019.laz'
 scan_angle_factor = 0.006 #to convert from value given by las object, see https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998.
+
 las = laspy.read(fpath)
 np_las = np.transpose(np.vstack([las.x, las.y, las.z, las.classification, las.scan_angle*scan_angle_factor, np.zeros(len(las))]))
 {% endhighlight %}
@@ -88,15 +90,59 @@ kdtree_las_xy = KDTree(np_las[:, :2])
 Now we’re ready to calculate our variables of interest. For each polygon:
 
 1. Do a range query to find the points with (x,y) coordinates near the polygon. I like to use a range that’s slightly larger than the minimum enclosing circle of the minimum bounding rectangle of the polygon, since it’s guaranteed to include each point in the polygon and also makes it more likely that we’ll include many ground returns. Here, we’ll use a buffer of 2 meters for the minimum enclosing circle.
-[code]
-[picture of buffered MEC, MEC, MBR, and polygon]
-2. Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just use theirs. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and will accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
-[code]
-3. Now we’re ready to find the points which fall in our polygon. One approach for doing this that seems appealing is the shapely.contains() method [link shapely.contains — Shapely 2.0b2 documentation], since our polygons are already represented as shapely objects by GeoPandas. However, I’ve found that it takes too long to convert an ndarray to a list of shapely points. What works better is to convert the polygon to a list or ndarray of coordinates, then use some other function for doing point-in-polygon tests. Here I’ll use a function mostly lifted from Xiao (2016), but which doesn’t consider returns intersecting polygons’ line segments or vertices. This works well enough for our purposes, but if you’d like more speed you can check out this implementation of the winding number algorithm [link] which leverages numba—as shown by this stackexchange post [link], this can make a huge difference. For more on point-in-polygon tests, Xiao (2016) is again a good reference.
-[code]
-[picture, if we have time]
+{% highlight Python %}
+#"poly" is a row returned by GeoDataFrame.iterrows()
+search_radius_buffer = 2
+poly_mbr = np.array(poly['geometry'].bounds) #minx, miny, maxx, maxy
+poly_mbr_centroid = np.array([(poly_mbr[2] + poly_mbr[0]) / 2, (poly_mbr[3] + poly_mbr[1]) / 2])
+poly_search_radius = search_radius_buffer + ((poly_mbr[2] - poly_mbr_centroid[0])**2 + (poly_mbr[3] - poly_mbr_centroid[1])**2) ** 0.5
+near_poly_np_las = np_las[kdtree_las_xy.query_ball_point(poly_mbr_centroid, poly_search_radius)]
+{% endhighlight %}
+**TODO: picture of buffered MEC, MEC, MBR, and polygon**
+2. Next, we’ll interpolate ground returns and use the derived surface to compute height above ground for each point satisfying the range query. USGS lidar datasets usually have good ground classifications, so we’ll just work with theirs and not try to come up with our own. We’ll use TIN interpolation, which is fast if we’re only considering a few hundred points at a time like we are here, and will accurate enough for our purposes (separating returns near or on the ground from those which probably correspond to tree canopies). Again, we’ll take advantage of scipy for this.
+{% highlight Python %}
+def get_height_above_ground_for_points(points):
+    '''Estimate height above ground for a (ground-classified) point cloud, using TIN interpolation.
+    see https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.LinearNDInterpolator.html'''
+    ground_las_class_code = 2
+    ground_points = points[points[:,3] == ground_las_class_code]
+    ground_interp = LinearNDInterpolator(points = ground_points[:,:2], values = ground_points[:,2])
+    ground_elevations = ground_interp(points[:,:2])
+    return points[:,2] - ground_elevations
+
+near_poly_np_las[:, 5] = get_height_above_ground_for_points(near_poly_np_las)
+{% endhighlight %}
+3. Now we’re ready to find the points which fall in our polygon. One approach for doing this that seems appealing is the [shapely.contains() method](https://shapely.readthedocs.io/en/latest/reference/shapely.contains.html#shapely.contains), since our polygons are already represented as shapely objects by GeoPandas. However, I’ve found that in practice it takes too long to convert an ndarray to a list of shapely points. What works better is to convert the polygon to a list or ndarray of coordinates, then run some other function for doing point-in-polygon tests. Here I'll use a function mostly lifted from Xiao (2016), but which doesn’t consider points intersecting polygons’ line segments or vertices. This works well enough for our purposes, but if you’d like more speed you can check out [this implementation of the winding number algorithm](https://github.com/sasamil/PointInPolygon_Py/blob/master/pointInside.py) which leverages Numba—as shown by [this stackexchange post](https://stackoverflow.com/a/48760556), Numba can make a huge difference here. For more on point-in-polygon tests, Xiao (2016) is again a good reference.
+{% highlight Python %}
+def point_in_polygon(point, polygon):
+    '''Tests whether (x,y) coordinates of point is in polygon using ray tracing algorithm
+    Argument point is numpy array with shape (m,) where m >= 2, polygon is a numpy array with shape (n, 2) where n-1 is the number of vertices in the polygon and polygon[0] == polygon[n]
+    Adopted from Xiao (2016), see https://github.com/gisalgs/geom/blob/master/point_in_polygon.py'''
+    point_is_in_polygon = False
+    for i in range(len(polygon)-1):
+        poly_vertex1, poly_vertex2 = polygon[i], polygon[i+1]
+        yside1 = poly_vertex1[1] >= point[1]
+        yside2 = poly_vertex2[1] >= point[1]
+        xside1 = poly_vertex1[0] >= point[0]
+        xside2 = poly_vertex2[0] >= point[0]
+        if yside1 != yside2: #if point's y coord is between y coords of line segment
+            if xside1 and xside2: #if point is to the left of both polygon vertices:
+                point_is_in_polygon = not point_is_in_polygon
+            else:
+                m = poly_vertex2[0] - (poly_vertex2[1]-point[1])*(poly_vertex1[0]-poly_vertex2[0])/(poly_vertex1[1]-poly_vertex2[1]) #intersection point
+                if m > point[0]:
+                    point_is_in_polygon = not point_is_in_polygon
+    return point_is_in_polygon
+    
+poly_vertex_array = np.array(poly['geometry'].exterior.coords)
+in_poly_np_las = near_poly_np_las[[point_in_polygon(las_point, poly_vertex_array) for las_point in near_poly_np_las]]
+{% endhighlight %}
+**TODO?: picture, if we have time**
 4. From here, we can easily find the maximum height above ground.
-[code]
+{% highlight Python %}
+#tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[~np.isnan(near_poly_np_las[:, 5]), 5]) #see text below for why we use ~np.isnan()
+tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[near_poly_np_las[:, 5], 5]) #see text below for why we use ~np.isnan()
+{% endhighlight %}
 5. LAI can also be easily calculated now. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
 $$
 E = mc^2
@@ -106,21 +152,20 @@ L = -1/k * ln(I / I_0).
 For a spherical leaf angle distribution, meaning all leaves have a uniform probability for all angles from the horizontal plane (zenith angles %theta%) %in% [0°, 90°], we have k = 0.5. Following Richardson et. al. (2009), we’ll substitute I with the total number of ground returns R_g and I_0 with the total number of returns in the polygon R_t, and also model the effects of lidar scanning angle using Lambert’s cosine law I = I_0*cos(%theta%). This gives us the model:
 L = -cos(%mean_theta_lidar%) / 0.5 * ln(R_g/R_t)
 Where %mean_theta_lidar% is the mean lidar scanning angle of all returns in the polygon. Here’s the code for implementing this model:
-[code]
+{% highlight Python %}
+lambert_beer_extinction_coefficient_when_scan_angle_is_0 = 0.5 #assumes spherical leaf angle distribution.
+ground_elev_threshold = 0.05 #in m
+
+total_number_of_returns_in_poly = len(in_poly_np_las)
+number_of_ground_returns_in_poly = np.sum(in_poly_np_las[:,5] <= ground_elev_threshold)
+mean_lidar_scanning_angle = np.mean(in_poly_np_las[:,4])
+tree_polys.at[index, 'lai'] = -np.cos(mean_lidar_scanning_angle) / lambert_beer_extinction_coefficient_when_scan_angle_is_0 * np.log(number_of_ground_returns_in_poly / total_number_of_returns_in_poly)
+{% endhighlight %}
 Note we consider a return to be a ground return if its height above ground is less than or equal to 5 cm.
- 
 
-{Explain procedure for each polygon:
-	1) do range query around polygon. Explain why I like MEC + buffer of MER.
-	2) do TIN interpolation of ground returns. Mention recently collected USGS point clouds generally have good ground classifications. Explain why (fast if we just look at a few points at a time, and should be accurate enough for our purposes.
-	3) do point-in-polygon test. Mention we’re avoiding shapely methods because converting numpy points to shapely objects takes too long. Very briefly explain ray tracing method, again mention Xiao (2016) as a good reference and mention that below we use a modified version of his code, but don’t consider points on line segments or verticies of polygons. Mention stackexchange post which goes over quickest ways to do point-in-polygon tests with python + numpy + numba (best is winding number + numba?).
-	4) max height this is just the maximum height above ground with (x,y) coordinates falling in the polygon 
-	5) calculate LAI. Go in deep here.
-Then show the code}
+**TODO: Explain results (run time, etc), make some comments, show some pictures.**
 
-{Explain results (run time, etc), make some comments, show some pictures.}
-
-If you’d like to reproduce exactly what we did here, here’s a script [link] which puts together everything we did above. Again, the polygons can be found here [link] and the laz file here [link].
+If you’d like to reproduce exactly what we did here, here’s a [script](google.com) which puts together everything we did above. **TODO: actually link to script** I tried to keep things in the order we discuss them in this post, in practice it would definitely make more sense to import our libraries at the start of the script, etc. Again, the polygons can be found here [link] and the laz file here [link]. 
 {Here’s the whole code, if you’d like. Here’s the geojson and here’s the laz files, if you’d like to completely reproduce}
 
 {Note “horizontal error” of polygons and lidar?}

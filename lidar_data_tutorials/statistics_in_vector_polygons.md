@@ -183,11 +183,11 @@ tree_polys.at[index, 'max_height'] = np.max(in_poly_np_las[near_poly_np_las[:, 5
 {% endhighlight %}
 * LAI can also be easily calculated at this point. Often the distribution of light throughout canopies is described in a method similar to the Beer-Lambert law for light attenuation through a homogenous medium (Jones, 2013). More specifically, this looks something like:
 $$
-E = mc^2
+I = I_0*exp(-kL)
 $$
 Where I is the irradiance (i.e., radiant flux) at the ground surface [W m^-2], I_0 is the irradiance at the top of the canopy, L is the leaf area index, and k is an “extinction coefficient” representing the ratio of the area of shadows cast by leaves to the actual area of the leaves (Jones, 2013). Solving for LAI gives us
 L = -1/k * ln(I / I_0).
-For a spherical leaf angle distribution, meaning all leaves have a uniform probability for all angles from the horizontal plane (zenith angles $\theta$) %in% [0°, 90°], we have k = 0.5. Following Richardson et. al. (2009), we’ll substitute I with the total number of ground returns R_g and I_0 with the total number of returns in the polygon R_t, and also model the effects of lidar scanning angle using Lambert’s cosine law I = I_0*cos(%theta%). This gives us the model:
+For a spherical leaf angle distribution, meaning all leaves have a uniform probability for all angles from the horizontal plane (zenith angle &theta) &isin [0°, 90°], we have k = 0.5. Following Richardson et. al. (2009), we’ll substitute I with the total number of ground returns R_g and I_0 with the total number of returns in the polygon R_t, and also model the effects of lidar scanning angle using Lambert’s cosine law I = I_0*cos(%theta%). This gives us the model:
 L = -cos(%mean_theta_lidar%) / 0.5 * ln(R_g/R_t)
 Where %mean_theta_lidar% is the mean lidar scanning angle of all returns in the polygon. Here’s the code for implementing this model:
 {% highlight Python %}

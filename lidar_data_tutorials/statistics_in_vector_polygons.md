@@ -4,9 +4,19 @@
 -----
 
 Free, high-quality lidar datasets have become much more common in the last few years than they were a decade ago. A good portion of the planet now has at least one representative lidar survey. In the future surveys will become more widespread and regular, and quality will keep improving.
-This increase in the availability of lidar data has caused it to become more commonly utilized in the GIS world. **The trend** has been **bolstered** by the awesome tools that are available nowadays. LAStools and PDAL are often used by GIS professionals, WhiteboxTools has great support for lidar data, and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
+Alongside this trend, the GIS community some awesome tools for working with lidar 
+This increase in the availability of lidar data has caused it to become more commonly utilized in the GIS world, a trend which has been bolstered by the awesome tools that are available to the community nowadays. LAStools and PDAL are specialized software suites that are now often used by GIS professionals, WhiteboxTools has great support for lidar data, and ArcGIS and QGIS have both been adding more options for visualizing and processing lidar point clouds. 
 
-**TODO: screenshot of recent QGIS release showing lidar support. Give credit to source, probably Lutra**
+<div style="text-align: center">
+  <figure>
+      <img
+       src="https://www.lutraconsulting.co.uk/img/posts/pointcloud_copc_melbourne.gif"
+       width="600"
+       height="397"
+     />
+     <figcaption>. Image by Lutra Consulting</figcaption>
+  </figure>
+</div>
 
 However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on the returns corresponding to each polygon? What if we wanted to limit our data to returns which fall in certain classes in a land cover raster? 
 

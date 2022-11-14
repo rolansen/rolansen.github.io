@@ -297,7 +297,7 @@ ahm <- function(aoi_poly, aerial_path, sat_paths,
       hist_match_params <- hist_match_params_mat[hist_match_params_mat[,'cdf_id']==neighbor_id,]
       #sat_n <- hist_match_params$ncell_sat
       #aerial_n <- hist_match_params$ncell_aerial
-      #cdf_factor <- sat_n/(sat_L-1) * (aerial_L-1)/aerial_n #cdf's and icdf's are normalized already, stupid
+      #cdf_factor <- sat_n/(sat_L-1) * (aerial_L-1)/aerial_n #cdf's and icdf's are normalized already, this was a mistake
       
       ##red
       #print(paste(Sys.time(), 'Matching red', row, neighbor_id))

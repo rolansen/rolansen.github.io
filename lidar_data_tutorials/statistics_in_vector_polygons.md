@@ -21,7 +21,7 @@ This increase in the availability of lidar data has caused it to become more com
 
 However, at the moment tools for integrating lidar data with other GIS data types (vector & raster) can still feel somewhat limited. What if we wanted to do something like identify the returns in or around features from a polygon layer, then compute a new field for this layer based on these returns? What if we wanted to limit our data to returns which fall in certain classes of a land cover image? 
 
-It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is one helpful option. Another is Python, which is perhaps more ubiquitous at this point, and has the huge advantage of letting us work with point clouds in the form of NumPy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
+It seems relatively difficult to do these things with the software I listed above. The R package [lidR](https://cran.r-project.org/web/packages/lidR/index.html) is one helpful option. Another is Python, which is perhaps more ubiquitous than R at this point, and has the huge advantage of letting us work with point clouds in the form of NumPy arrays. Here, I’ll go over an example which will show how easily, flexibly, and efficiently we can work with lidar point clouds using tools from the Python ecosystem. 
 
 To reproduce the code on this page, you'll need a Python environment which includes laspy, the Python bindings for the Rust crate laz-rs (see the [laspy installation instructions](https://laspy.readthedocs.io/en/latest/installation.html)), NumPy, SciPy, and GeoPandas. Things may be easier to follow along with if the reader has worked with NumPy and GeoPandas before, but I don’t think they have to be too familiar with those packages. 
 
@@ -48,7 +48,7 @@ If we were to do something like this in practice, we’d probably be segmenting 
 
 -----
 
-First, let’s change directories to the folder in which we’re keeping the data, read our polygon layer as a GeoDataFrame, and instantiate fields for the we’re interested in:
+First, let’s change directories to the folder in which we’re keeping the data, read our polygon layer as a GeoDataFrame, and instantiate fields for the variables we’re interested in:
 {% highlight Python %}
 import geopandas as gpd
 import numpy as np
@@ -61,7 +61,7 @@ tree_polys = gpd.read_file(tree_polys_filename)
 tree_polys['max_height'] = np.nan
 tree_polys['lai'] = np.nan
 {% endhighlight %}
-Next, we’ll read our lidar dataset and convert it to an ndarray. laspy makes it very easy to read lidar data, and while laspy’s LasData objects already represent point clouds as mdarrays (see the point.array attribute), I find that it’s often easier to just convert the dimensions of interest directly, since so many libraries are able to work with ndarrays. We need the [scaled versions of the x, y, and z dimensions](https://laspy.readthedocs.io/en/latest/intro.html#point-records), which aren’t included in LasData.point.array, so we’ll make a new ndarray which includes these dimensions, the class code dimension (which we’ll use to find heights above ground elevation), the scan angle (which we’ll use to calculate LAI), and an empty column that we’ll fill in with heights. 
+Next, we’ll read our lidar dataset and convert it to an ndarray. laspy makes it very easy to read lidar data, and while laspy’s LasData objects already represent point clouds as ndarrays (see the point.array attribute), I find that it’s often easier to just convert the dimensions of interest directly, since so many libraries are able to work with ndarrays. We need the [scaled versions of the x, y, and z dimensions](https://laspy.readthedocs.io/en/latest/intro.html#point-records), which aren’t included in LasData.point.array, so we’ll make a new ndarray which includes these dimensions, the class code dimension (which we’ll use to find heights above ground elevation), the scan angle (which we’ll use to calculate LAI), and an empty column that we’ll fill in with heights. 
 {% highlight Python %}
 import laspy
 
@@ -167,7 +167,7 @@ Where *I* is the irradiance (i.e., radiant flux) at the ground surface [W m^-2],
 
 *L* = -ln(*I* / *I*₀) / *k*.
 
-For a spherical leaf angle distribution, meaning all leaves have a uniform probability for any zenith angle *&theta;* &isin; [0°, 90°], we have *k* = 0.5. Following Richardson et. al. (2009), we’ll substitute *I* with the total number of returns reaching the ground surface *R*ₛ and *I*₀ with the total number of returns in the polygon *R*ₜ, and also account for the effects of lidar scanning angle using Lambert’s cosine law *I* = *I*₀cos(*&theta;*). This gives us the model:
+For a spherical leaf angle distribution, meaning all leaves have a uniform probability for any zenith angle *&theta;* &isin; [0°, 90°], we have *k* = 0.5. Following Richardson et. al. (2009), we’ll substitute *I* with the total number of returns reaching the ground surface *R*ₛ and *I*₀ with the total number of returns in the polygon *R*ₜ, and also account for the effects of lidar scanning angle using Lambert’s cosine law *I* = *I*₀ cos(*&theta;*). This gives us the model:
 
 L = -cos(&Theta;) ln(*R*ₛ/*R*ₜ) / 0.5,
 

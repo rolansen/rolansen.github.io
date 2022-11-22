@@ -7,8 +7,8 @@ patch configuration, and building density drives puma movement in developed land
 
 Unfortunately, digital numbers (DN's) of digital aerial images are generally physically meaningless, 
 so they can't be used to accurately estimate things like spectral indices. 
-Also, there are usually systematic differences in DN's between recorded over the same area due to contrasting illumination conditions 
-and image processing procedures, limiting  aerial imagery's capacity for supporting long-term, fine-scale landscape change monitoring. 
+Also, there are usually systematic differences in DN's between images making up a time series due to contrasting illumination conditions 
+and image processing procedures, limiting aerial imagery's capacity for supporting long-term, fine-scale landscape change monitoring. 
 
 We can solve these problems by radiometrically correcting the aerial images we're working with, 
 so that pixels represent (surface or top-of-atmosphere) reflectance estimates. 

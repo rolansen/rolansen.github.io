@@ -169,9 +169,9 @@ Where *I* is the irradiance (i.e., radiant flux) at the ground surface [W m^-2],
 
 For a spherical leaf angle distribution, meaning all leaves have a uniform probability for any zenith angle *&theta;* &isin; [0°, 90°], we have *k* = 0.5. Following Richardson et. al. (2009), we’ll substitute *I* with the total number of returns reaching the ground surface *R*ₛ and *I*₀ with the total number of returns in the polygon *R*ₜ, and also account for the effects of lidar scanning angle using Lambert’s cosine law *I* = *I*₀ cos(*&theta;*). This gives us the model:
 
-L = -cos(&Theta;) ln(*R*ₛ/*R*ₜ) / 0.5,
+*L* = -cos(*&Theta;*) ln(*R*ₛ/*R*ₜ) / 0.5,
 
-Where &Theta; is the mean lidar scanning angle of all returns in the polygon. Here’s some code which implements this model:
+Where *&Theta;* is the mean lidar scanning angle of all returns in the polygon. Here’s some code which implements this model:
 {% highlight Python %}
 lambert_beer_extinction_coefficient_when_scan_angle_is_0 = 0.5 #assumes spherical leaf angle distribution.
 ground_elev_threshold = 0.05 #in m

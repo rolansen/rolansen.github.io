@@ -69,7 +69,7 @@ It seems very possible that we'd see some clear breaks in the image along the bo
       <img
        src="/assets/local_trad_hist_breaks.PNG"
        width="350"
-       height="350"
+       height="265"
      />
      <figcaption>Discontinuities from localized traditional histogram matching</figcaption>
   </figure>
@@ -105,7 +105,7 @@ Let's try applying adaptive histogram matching to the scene I described above. I
       <img
        src="/assets/ahm_no_breaks.PNG"
        width="350"
-       height="350"
+       height="265"
      />
      <figcaption>Discontinuities are avoided with adaptive histogram matching</figcaption>
   </figure>

@@ -17,7 +17,7 @@ Given some image with values we wish to change the distribution of, say an aeria
 and another image with a distribution that we want to map the other image's values to, like a Landsat image, 
 we can map the values of the first image with the equation 
 
-*y* = *Cₛ⁻¹*(*Cₐ*(*x*)),
+*y* = *Cₛ⁻¹*( *Cₐ*( *x* ) ),
 
 where *x* is an input value from the first image, *Cₐ* is the cumulative distribution function (CDF) of the first image, 
 *Cₛ⁻¹* is the inverse cumulative distribution function (iCDF) of the second image, and *y* is a target value (Richards, 2016).

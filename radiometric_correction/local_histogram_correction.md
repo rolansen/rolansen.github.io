@@ -16,9 +16,11 @@ Histogram matching is one simple and intuitive method for doing this sort of thi
 Given some image with values we wish to change the distribution of, say an aerial image, 
 and another image with a distribution that we want to map the other image's values to, like a Landsat image, 
 we can map the values of the first image with the equation 
-[y = iCDF_sat(CDF_aerial(x))],
-where [x] is an input value from the first image, [CDF_aerial] is the cumulative distribution function (CDF) of the first image, 
-[iCDF_sat] is the inverse cumulative distribution function (iCDF) of the second image, and [y] is a target value (Richards, 2016).
+
+*y* = *Cₛ⁻¹*(*Cₐ*(*x*)),
+
+where *x* is an input value from the first image, *Cₐ* is the cumulative distribution function (CDF) of the first image, 
+*Cₛ⁻¹* is the inverse cumulative distribution function (iCDF) of the second image, and *y* is a target value (Richards, 2016).
 
 Other simple empirical methods for radiometric correction, like dark pixel subtraction and pseudo-invariant pixel-based methods, 
 assume a linear relationship between reflectance values and the DN's to be corrected, 

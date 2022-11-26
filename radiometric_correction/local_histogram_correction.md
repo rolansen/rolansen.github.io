@@ -50,12 +50,7 @@ How could we address these discontinuities? Adaptive histogram equalization, a p
 ahm(aoi_poly, aerial_path, sat_paths, c_region_size, grid_lindim_length, out_name)
 {% endhighlight %}
 The arguments are as follows:
-* *aoi_poly* is an sf-tibble or sf-data.frame containing one polygon which contains each pixel from the aerial image we'd like to correct
-* *aerial_path* is the path to an aerial image file. This and each file listed in *sat_paths* can take any GDAL-readable format
-* *sat_paths* is a character vector listing the paths for each satellite band file. Each path should be listed in the same order as the corresponding bands from the aerial image file
-* *c_region_size* is the length of the width and height for the "computational region" of each grid cell, in the units of the aerial image's coordinate reference system. Pixels falling in the computational region, which is centered on the corresponding grid cell's centroid, will be used to find the distribution of pixel values for that cell.
-* *grid_lindim_length* is the length of each grid cell's width and height, in the units of the aerial image's coordinate reference system.
-* *out_name* is the path of the output file, without the extension. The output file will always be a GeoTiff. 
+f
 
 In the examples below, *c_region_size* and *grid_lindim_length* are set to be identical.
 

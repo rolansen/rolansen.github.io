@@ -46,9 +46,7 @@ It seems very possible that we'd see some clear breaks in the image along the bo
 Increasing the granularity of the grid lessens these effects, as I discuss below. 
 
 How could we address these discontinuities? Adaptive histogram equalization, a popular technique for image contrast enhancement, addresses this sort of thing by finding the 4 nearest (2 nearest for pixels near edges, nearest for pixels near corners) grid cells to each pixel, applying histogram equalization functions defined for each grid cell to the pixel, then interpolating the outputs based on the pixels' proximities to each grid cell center. It's pretty straightforward to do something analogous with histogram matching--let's call this approach "adaptive histogram matching." [Here's an R script](https://github.com/rolansen/rolansen.github.io/blob/main/code/ahm_no_subgrid.R) defining a function that will do this for us. It requires the libraries [terra](https://cran.r-project.org/web/packages/terra/index.html) and [sf](https://cran.r-project.org/web/packages/sf/index.html). After running the script, the user can correct their imagery with a command like this: 
-{% hightlight R %}
-ahm(aoi_poly, aerial_path, sat_paths, c_region_size, grid_lindim_length, out_name)
-{% endhighlight %}
+
 The arguments are as follows:
 f
 

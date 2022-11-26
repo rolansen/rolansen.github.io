@@ -22,6 +22,17 @@ we can map the values of the first image with the equation
 where *x* is an input value from the first image, *Cₐ* is the cumulative distribution function (CDF) of the first image, 
 *Cₛ⁻¹* is the inverse cumulative distribution function (iCDF) of the second image, and *y* is a target value (Richards, 2016).
 
+<div style="text-align: center">
+  <figure>
+      <img
+       src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Histmatching.svg/1024px-Histmatching.svg.png"
+       width="600"
+       height="400"
+     />
+     <figcaption>Histogram matching. From Wikipedia.</figcaption>
+  </figure>
+</div>\
+
 Other simple empirical methods for radiometric correction, like dark pixel subtraction and pseudo-invariant pixel-based methods, 
 assume a linear relationship between reflectance values and the DN's to be corrected, 
 which may not be realistic ([Campbell & Wynne?]), 

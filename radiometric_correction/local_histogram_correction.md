@@ -53,7 +53,7 @@ We'll work with imagery taken over Fort Worth, Texas. The aerial imagery I want 
 <div style="text-align: center">
   <figure>
       <img
-       src="/assets/study_area_with_grid.png"
+       src="/assets/study_area_with_grid.PNG"
        width="500"
        height="500"
      />

@@ -63,7 +63,18 @@ We'll work with imagery taken over Fort Worth, Texas. The aerial imagery I want 
 
 It seems very possible that we'd see some clear breaks in the image along the borders of many grid cells, if we applied localized traditional histogram matching. Trying it out on my study area with a length of 300 meters for the width and height of each grid cell shows that this is the case. 
 
-*fig2: discontinuities due to differences in local histograms*
+
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/local_trad_hist_breaks.PNG"
+       width="350"
+       height="350"
+     />
+     <figcaption>Discontinuities from localized traditional histogram matching</figcaption>
+  </figure>
+</div>\
+
 
 Increasing the granularity of the grid lessens these effects, as I discuss below. 
 
@@ -89,7 +100,16 @@ The script is very much a work in progress, and likely has several bugs. I'll im
 
 Let's try applying adaptive histogram matching to the scene I described above. I used a grid cell and computational region width/height of 300 meters. We can see that the discontinuities have been smoothed over.
 
-*fig 4: fig2 but from adaptive histogram matching*
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/ahm_no_breaks.PNG"
+       width="350"
+       height="350"
+     />
+     <figcaption>Discontinuities are avoided with adaptive histogram matching</figcaption>
+  </figure>
+</div>\
 
 Tuominen & Pekkinaren (2004) introduced another simple, empirical approach for radiometrically correcting aerial imagery. They used the formula
 

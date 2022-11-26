@@ -94,7 +94,21 @@ In the examples below, *c_region_size* and *grid_lindim_length* are set to be id
 
 In addition to writing a file for the corrected image, the function will output two other files: an Rds file containing a DataFrame that lists the satellite iCDF and aerial CDF corresponding to each grid cell, and a GeoPackage containing a layer for the grid used to find the aforementioned iCDF's/CDF's as well as a layer representing a separate grid that the function uses to identify, for each aerial pixel, the neighboring cells from the first grid.
 
-*fig3: the two grids* 
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/cdf_grid.PNG"
+       width="250"
+       height="250"
+     />
+      <img
+       src="/assets/interp_grid.PNG"
+       width="250"
+       height="250"
+     />
+     <figcaption>The grid used to define the iCDF's/CDF's (left) and the grid used to perform the interpolation (right)</figcaption>
+  </figure>
+</div>\
 
 The script is very much a work in progress, and likely has several bugs. I'll improve flexibility and efficiency going forward. Things I plan on doing in the future include making the aoi_poly and output files optional, putting in an option for returning a SpatRaster object, allowing both the aerial imagery and the satellite imagery to have their respective bands placed in one or multiple files, adding behavior allowing for a number of output bands other than 3, and making a faster interpolation step. I'll update this post as I do these things. I'd also like to try implementing this method with Google Earth Engine. 
 

@@ -50,7 +50,16 @@ Can we come up with a way to do histogram matching that accounts for these incon
 
 We'll work with imagery taken over Fort Worth, Texas. The aerial imagery I want to correct is a subset of a NAIP mosaic which can be downloaded [here](https://nrcs.app.box.com/v/naip/file/769545426773). The images making up this mosaic were recorded in late 2020, and it's effectively 6-bit due to SID compression. We'll use a Sentinel-2 surface reflectance image that has a similar vintage (L2A_T14SPB_A027708_20201011T171836) as our reference. I'll be working with the red, green and blue bands of each image, i.e. the first three of the aerial and bands 4, 3, and 2 from the Sentinel-2 image. Each corresponding band pair will be treated separately from the others. 
 
-*fig1: 300 m grid overlaying NAIP subset*
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/study_area_with_grid.png"
+       width="500"
+       height="500"
+     />
+     <figcaption>300 m grid overlaying NAIP subset for study area</figcaption>
+  </figure>
+</div>\
 
 It seems very possible that we'd see some clear breaks in the image along the borders of many grid cells, if we applied localized traditional histogram matching. Trying it out on my study area with a length of 300 meters for the width and height of each grid cell shows that this is the case. 
 

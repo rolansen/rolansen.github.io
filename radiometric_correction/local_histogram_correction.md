@@ -45,4 +45,28 @@ It seems very possible that we'd see some clear breaks in the image along the bo
 
 Increasing the granularity of the grid lessens these effects, as I discuss below. 
 
+How could we address these discontinuities? Adaptive histogram equalization, a popular technique for image contrast enhancement, addresses this sort of thing by finding the 4 nearest (2 nearest for pixels near edges, nearest for pixels near corners) grid cells to each pixel, applying histogram equalization functions defined for each grid cell to the pixel, then interpolating the outputs based on the pixels' proximities to each grid cell center. It's pretty straightforward to do something analogous with histogram matching--let's call this approach "adaptive histogram matching." [Here's an R script](https://github.com/rolansen/rolansen.github.io/blob/main/code/ahm_no_subgrid.R) defining a function that will do this for us. It requires the libraries [terra](https://cran.r-project.org/web/packages/terra/index.html) and [sf](https://cran.r-project.org/web/packages/sf/index.html). After running the script, the user can correct their imagery with a command like this: 
+{% hightlight R %}
+ahm(aoi_poly, aerial_path, sat_paths, c_region_size, grid_lindim_length, out_name)
+{% endhighlight %}
+The arguments are as follows:
+* *aoi_poly* is an sf-tibble or sf-data.frame containing one polygon which contains each pixel from the aerial image we'd like to correct
+* *aerial_path* is the path to an aerial image file. This and each file listed in *sat_paths* can take any GDAL-readable format
+* *sat_paths* is a character vector listing the paths for each satellite band file. Each path should be listed in the same order as the corresponding bands from the aerial image file
+* *c_region_size* is the length of the width and height for the "computational region" of each grid cell, in the units of the aerial image's coordinate reference system. Pixels falling in the computational region, which is centered on the corresponding grid cell's centroid, will be used to find the distribution of pixel values for that cell.
+* *grid_lindim_length* is the length of each grid cell's width and height, in the units of the aerial image's coordinate reference system.
+* *out_name* is the path of the output file, without the extension. The output file will always be a GeoTiff. 
+
+In the examples below, *c_region_size* and *grid_lindim_length* are set to be identical.
+
+In addition to writing a file for the corrected image, the function will output two other files: an Rds file containing a DataFrame that lists the satellite iCDF and aerial CDF corresponding to each grid cell, and a GeoPackage containing a layer for the grid used to find the aforementioned iCDF's/CDF's as well as a layer representing a separate grid that the function uses to identify, for each aerial pixel, the neighboring cells from the first grid.
+
+*fig3: the two grids* 
+
+The script is very much a work in progress, and likely has several bugs. I'll improve flexibility and efficiency going forward. Things I plan on doing in the future include making the aoi_poly and output files optional, putting in an option for returning a SpatRaster object, allowing both the aerial imagery and the satellite imagery to have their respective bands placed in one or multiple files, adding behavior allowing for a number of output bands other than 3, and making a faster interpolation step. I'll update this post as I do these things. I'd also like to try implementing this method with Google Earth Engine. 
+
+Let's try applying adaptive histogram matching to the scene I described above. I used a grid cell and computational region width/height of 300 meters. We can see that the discontinuities have been smoothed over.
+
+*fig 4: fig2 but from adaptive histogram matching*
+
 ...

@@ -69,4 +69,9 @@ Let's try applying adaptive histogram matching to the scene I described above. I
 
 *fig 4: fig2 but from adaptive histogram matching*
 
+Tuominen & Pekkinaren (2004) introduced another simple, empirical approach for radiometrically correcting aerial imagery. They used the formula
+[corrected aerial = (mean sat in group) / (mean aerial in group) * (uncorrected aerial)], 
+where [uncorrected aerial] is some pixel in the aerial image, [mean sat in group] is the mean value of pixels in the satellite image which are part of some "group" defined for the pixel of interest, [mean aerial in group] is the mean value of aerial pixels in the group, and [corrected aerial] is the corrected value of the pixel of interest.
+They defined a "group" to be any one of the following: a) a satellite pixel and all coincident aerial pixels, b) all pixels within some radius of the pixel of interest, c) segments of the aerial image. They found the first method didn't work well. The process of image segmentation would also introduce its own set of problems, since the best parameters for most segmentation algorithms will likely vary from image to image. However, we can easily try out something like the radius-based method--I did this here, although rather than working with a circle, as they suggest, I just used the focal() function from the terra package to run a moving window across the imagery. 
+
 ...

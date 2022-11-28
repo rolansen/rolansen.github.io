@@ -182,14 +182,14 @@ Let's see how each method performed, compared to traditional histogram matching.
        height="125"
      />
   </figure>
-</div>\
+</div>
 
 |   | Traditional | Localized traditional, 39 m | Localized traditional, 150 m | Localized traditional, 300 m | Localized traditional, 600 m | Adaptive, 39 m | Adaptive, 150 m | Adaptive, 300 m | Adaptive, 600 m | Tuominen & Pekkarinen (2004), 39 m |
 | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
 | Mean absolute error  | 0.0111 | 0.00772 | 0.00926 | 0.00978 | 0.0105 | 0.00781 | 0.00945 | 0.00989 | 0.0103 | 0.00707 |
 | Standard deviation of error  | 0.0175 | 0.0134 | 0.0153 | 0.0159 | 0.0168 | 0.0135 | 0.0159 | 0.0164 | 0.0169 | 0.0122 |
-\
 
+\
 Pixel values from all methods are more similar to those of the Sentinel-2 imagery than values from traditional histogram matching; see the tables for details. Localized traditional histogram matching performs similarly to adaptive histogram matching, although as mentioned above, artifacts along grid cell borders will be an issue, especially as the grid becomes finer. Finer grid sizes in general improved accuracy for both methods, but introduced computational costs and visual artifacts.
 
 The method described by Tuominen & Pekkinaren (2004) gave lesser differences than any of the histogram matching methods, but unlike them is prone to "washing out" values where a surface is much brighter or darker than an adjacent surface, as shown by the image below. This is due to my use of the moving window method for defining groups of pixels; segmentation might have given much better results. 

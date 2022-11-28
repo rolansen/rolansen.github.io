@@ -33,7 +33,7 @@ where *x* is an input value from the first image, *Cₐ* is the cumulative distr
   </figure>
 </div>\
 
-Other simple empirical methods for radiometric correction, like dark pixel subtraction and pseudo-invariant pixel-based methods, 
+Other simple empirical (i.e., "relative") methods for radiometric correction, like dark pixel subtraction and pseudo-invariant pixel-based methods, 
 assume a linear relationship between reflectance values and the DN's to be corrected, 
 which may not be realistic ([Campbell & Wynne?]), 
 and also require the presence of bodies of water and pseudo-invariant surfaces in the scene of interest, respectively. 

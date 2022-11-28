@@ -33,15 +33,14 @@ where *x* is an input value from the first image, *Cₐ* is the cumulative distr
   </figure>
 </div>\
 
-Other simple empirical (i.e., "relative") methods for radiometric correction, like dark pixel subtraction and pseudo-invariant pixel-based methods, 
+Other simple empirical (i.e., "relative") methods for radiometric correction, like dark object subtraction/pseudo-invariant pixel-based methods, 
 assume a linear relationship between reflectance values and the DN's to be corrected, 
-which may not be realistic ([Campbell & Wynne?]), 
-and also require the presence of bodies of water and pseudo-invariant surfaces in the scene of interest, respectively. 
+which may not be realistic in some cases, and also require pseudo-invariant surfaces in the scene of interest and/or an image time series. 
 Histogram matching doesn't assume a linear relationship between DN's and reflectances, and only requires an image pair. 
 Empirical methods in general also have the advantage of not requiring a unique training set for each unique aerial imagery collection/satellite combination, 
 e.g. NAIP and Landsat versus Vexcel and Sentinel-2. 
 These kinds of training sets may be necessary to get the best performance out of machine learning-based approaches. 
-Several other methods for radiometric correction, particularly physical methods, require the use of field data, 
+Several other methods for radiometric correction, namely "absolute" methods, require the use of field data, 
 but this is not always practical depending on the user's available resources, especially if the aerial images were collected a few decades ago.
 
 Histogram matching does have some obvious drawbacks. It works well if the relationship between aerial DN's and satellite reflectances is constant throughout the area of interest. Despite common measures such as BRDF correction, there are several reasons why this may not be true. One is that aerial images are often delivered as mosaics, and seamline data which allows us to separate the original images making up the mosaic may not always be available. Often these images will have been collected at different times of day, not to mention different dates (more on that below). Color balancing of the original images while mosaicing exacerbates things.  

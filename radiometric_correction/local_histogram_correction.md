@@ -137,16 +137,6 @@ Let's see how each method performed, compared to traditional histogram matching.
 <div style="text-align: center">
   <figure>
       <img
-       src="/assets/scale.png"
-       width="460"
-       height="125"
-     />
-  </figure>
-</div>
-
-<div style="text-align: center">
-  <figure>
-      <img
        src="/assets/trad_match_results.png"
        width="460"
        height="276"
@@ -180,6 +170,16 @@ Let's see how each method performed, compared to traditional histogram matching.
        src="/assets/tuminen_match_results.png"
        width="460"
        height="276"
+     />
+  </figure>
+</div>
+
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/scale.png"
+       width="460"
+       height="125"
      />
   </figure>
 </div>

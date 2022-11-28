@@ -137,12 +137,22 @@ Let's see how each method performed, compared to traditional histogram matching.
 <div style="text-align: center">
   <figure>
       <img
+       src="/assets/scale.png"
+       width="460"
+       height="125"
+     />
+  </figure>
+</div>
+
+<div style="text-align: center">
+  <figure>
+      <img
        src="/assets/trad_match_results.png"
        width="460"
        height="276"
      />
   </figure>
-</div>\
+</div>
 
 <div style="text-align: center">
   <figure>
@@ -152,7 +162,7 @@ Let's see how each method performed, compared to traditional histogram matching.
        height="552"
      />
   </figure>
-</div>\
+</div>
 
 <div style="text-align: center">
   <figure>
@@ -162,7 +172,7 @@ Let's see how each method performed, compared to traditional histogram matching.
        height="552"
      />
   </figure>
-</div>\
+</div>
 
 <div style="text-align: center">
   <figure>
@@ -172,7 +182,7 @@ Let's see how each method performed, compared to traditional histogram matching.
        height="276"
      />
   </figure>
-</div>\
+</div>
 
 |   | Traditional | Localized traditional, 39 m | Localized traditional, 150 m | Localized traditional, 300 m | Localized traditional, 600 m | Adaptive, 39 m | Adaptive, 150 m | Adaptive, 300 m | Adaptive, 600 m | Tuominen & Pekkarinen (2004), 39 m |
 | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |

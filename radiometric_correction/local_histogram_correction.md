@@ -132,4 +132,32 @@ Tuominen & Pekkinaren (2004) introduced another simple, empirical approach for r
 where *S* is the mean value of pixels in the satellite image which are part of some "group" defined for the pixel of interest, *X* is the mean value of aerial pixels in the group, and once again *x* and *y* are the original and corrected values for the aerial pixel of interest, respectively. 
 They defined a "group" to be any one of the following: a) a satellite pixel and all coincident aerial pixels, b) all pixels within some radius of the pixel of interest, c) segments of the aerial image. They found the first method didn't work well. The process of image segmentation would also introduce its own set of problems, since the best parameters for most segmentation algorithms will likely vary from image to image. However, we can easily try out something like the radius-based method--I did this here, although rather than working with a circle, as they suggest, I just used the focal() function from the terra package to run a moving window across the imagery. 
 
-...
+Let's see how each method performed, compared to traditional histogram matching. I applied 4 grid cell (or window) sizes: 600 meters, 300 meters, 150 meters, and 39 meters; only the latter size was applied for the method described by Tuominen & Pekkarinen (2004), since the larger sizes seemed to be computationally impractical. I resampled each corrected image to the resolution of the Sentinel-2 image, taking the average of the corrected aerial pixels, then found the difference between each low-resolution corrected image and the Sentinel-2 image. Results are shown in the tables and images below. 
+
+*figure, table with mean absolute error, standard deviation of error for each method/grid size*
+
+Pixel values from all methods are more similar to those of the Sentinel-2 imagery than values from traditional histogram matching; see the tables for details. Localized traditional histogram matching performs similarly to adaptive histogram matching, although as mentioned above, artifacts along grid cell borders will be an issue, especially as the grid becomes finer. Finer grid sizes in general improved accuracy for both methods, but introduced computational costs and visual artifacts.
+
+The method described by Tuominen & Pekkinaren (2004) gave lesser differences than any of the histogram matching methods, but unlike them is prone to "washing out" values where a surface is much brighter or darker than an adjacent surface, as shown by the image below. This is due to my use of the moving window method for defining groups of pixels; segmentation might have given much better results. 
+
+Performance is apparently worse around heterogenous areas for all methods, no matter the grid cell dimensions. This may partially be due to the resampling method--rather than finding a simple average, it would have been more realistic to model the contribution of each aerial pixel's reflectance to satellite pixel reflectances with a point spread function (Townshend et. al., 2000). The resampling method probably isn't the only reason, though, given the other things just discussed.
+
+We can probably improve accuracy by considering spectral similarity between neighboring pixels in addition to spatial relationships. The most obvious way to do this would be to cluster the imagery, then only consider pixels from one cluster at a time when estimating reflectance. Another option would be to somehow consider spectral distances, in addition to spatial distances. We could also try segmentation as Tuominen & Pekkarinen (2004) suggest, and while as I mentioned above parameterization could be an obstacle, it seems like a promising option if the user doesn't mind engaging in some trial and error. 
+
+What are the advantages adaptive histogram matching provides over the method described by Tuominen & Pekkarinen (2004)? It seems to be comparably accurate but avoids the visual artifacts introduced by the moving window approach for that method and the often-tricky parameterization that comes with the segmentation approach for that method. It's also generally faster, from my experience, especially with a coarse grid. I think these advantages could make adaptive histogram matching a good option when the user wishes to use the imagery something like object recognition *after* they radiometrically correct it.
+
+In future posts I'll further discuss the effects of varying grid cell size and of incorporating image classification. I'm also writing a series of posts on neutral landscape models, random fields, and conditional autoregressive models. While I'm working on these I'll also write about how well adaptive histogram matching works on simulated landscapes. What's an ideal grid cell size, given some level of autocorrelation and non-stationarity in the landscape, and some small discrete objects with different "optical" properties than those of the "background" surface? How can we incorporate clustering or spectral distances to improve performance?
+
+-----
+
+References:
+
+Morgan, J. L., Gergel, S. E., & Coops, N. C. (2010). Aerial photography: a rapidly evolving tool for ecological management. *BioScience, 60*(1), 47-59.
+
+Richards, J. A. (2013). *Remote sensing digital image analysis*. Berlin: springer
+
+Suraci, J. P., Nickel, B. A., & Wilmers, C. C. (2020). Fine-scale movement decisions by a large carnivore inform conservation planning in human-dominated landscapes. *Landscape Ecology, 35*(7), 1635-1649.
+
+Townshend, J. R. G., Huang, C., Kalluri, S. N. V., Defries, R. S., Liang, S., & Yang, K. (2000). Beware of per-pixel characterization of land cover. *International Journal of remote sensing, 21*(4), 839-843.
+
+Tuominen, S., & Pekkarinen, A. (2004). Local radiometric correction of digital aerial photographs for multi source forest inventory. *Remote Sensing of Environment, 89*(1), 72-82.

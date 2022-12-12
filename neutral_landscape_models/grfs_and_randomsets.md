@@ -83,7 +83,7 @@ There's still some work to do before we can test out our radiometric correction 
 
 -----
 
-My next post on this topic will go over how we can divide our landscape into something like a patch mosaic with each patch containing values drawn from one of several GRF's. Then, I'll address the efficiency issues discussed above, and also introduce nonstationarity to our GRF's, by leveraging the popular INLA approach for approximating GRF's with Gaussian Markov random fields. After all this we'll be in a good position to start evaluating our radiometric correction methods.
+My next post on this topic will go over how we can divide our landscape into something like a patch mosaic with each patch containing values drawn from one of several GRF's. Then, I'll address the efficiency issues discussed above and also introduce nonstationarity to our GRF's by using the popular INLA approach for approximating GRF's with Gaussian Markov random fields. After all this we'll be in a good position to start evaluating our radiometric correction methods.
 
 -----
 

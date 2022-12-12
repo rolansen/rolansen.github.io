@@ -16,7 +16,7 @@ I'll talk about GRF's briefly--the next couple of paragraphs should be familiar 
 <div style="text-align: center">
   <figure>
       <img
-       src="/assets/variogram.PNG"
+       src="/assets/variogram.png"
        width="883"
        height="552"
      />

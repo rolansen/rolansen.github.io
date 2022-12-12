@@ -32,4 +32,5 @@ I use this low mean and variance and force values to be greater than 0 and less 
 * variance = 0.25
 * nugget = 0.02 
 * range = 10 units
+
 We're using an exponential variogram/covariance model, since that's the only kind allowed by NLMR's nlm_gaussianfield() function. Under the hood nlm_gaussianfield() is using the RandomFields library, and if we'd wanted to use a different covariance model we could have just as easily used RandomFields to simulate the field, convert the resulting object to a matrix, truncated values so they're between 0 and 1, and then converted the matrix to a raster. For now, though, I'll just use nlm_gaussianfield() to keep things simple.  

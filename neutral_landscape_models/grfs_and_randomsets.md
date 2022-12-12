@@ -15,6 +15,6 @@ I'll talk about GRF's briefly--the next couple of paragraphs should be familiar 
 
 *plot of exponential variogram model. List the parameter values.*
 
-For this type of GRF the covariance structure is often described with the (semi)variogram %gamma;%(*h*) = %sigma;%² - cov(*h*), where %sigma;%² is the variance. One common model for %gamma;%(*h*) is the exponential model %gamma;%(*h*) = %sigma;%²(1 - exp(-3*h*/*r*)) + *a*. *a* describes variation at *h* = 0 and is called the nugget. *r* is the range, a value of *h* at which gamma;%(*h*) approaches an upper bound referred to as the sill. The sill is equal to *a* + %sigma;%².
+For this type of GRF the covariance structure is often described with the (semi)variogram &gamma;(*h*) = &sigma;² - cov(*h*), where &sigma;² is the variance. One common model for &gamma;(*h*) is the exponential model &gamma;(*h*) = &sigma;²(1 - exp(-3*h*/*r*)) + *a*. *a* describes variation at *h* = 0 and is called the nugget. *r* is the range, a value of *h* at which &gamma;(*h*) approaches an upper bound referred to as the sill. The sill is equal to *a* + &sigma;².
 
 GRF's are often invoked when working with spatial data--for example, kriging methods assume the surface of interest is a GRF. 

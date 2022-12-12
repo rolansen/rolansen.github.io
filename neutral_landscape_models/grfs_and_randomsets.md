@@ -1,4 +1,4 @@
-**In [this post](https://github.com/rolansen/rolansen.github.io/blob/main/radiometric_correction/local_histogram_correction.md), 
+**In another post, 
 I discuss a few approaches for radiometrically correcting aerial imagery and evaluate their accuracy using real imagery. 
 I figured it'd be nice to work with simulated landscapes to see how characteristics of the imagery, 
 like the presence of objects like trees and houses, affect these methods' performances.  

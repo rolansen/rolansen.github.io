@@ -17,8 +17,8 @@ I'll talk about GRF's briefly--the next couple of paragraphs should be familiar 
   <figure>
       <img
        src="/assets/variogram.png"
-       width="883"
-       height="552"
+       width="442"
+       height="276"
      />
      <figcaption>Exponential variogram model. Sill = 1, nugget = 0.2, range = 10.</figcaption>
   </figure>

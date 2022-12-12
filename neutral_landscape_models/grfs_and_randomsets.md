@@ -13,7 +13,16 @@ One way to do this is to repeatedly simulate a Gaussian random field (GRF) and a
 
 I'll talk about GRF's briefly--the next couple of paragraphs should be familiar to those who have worked with geostatistics, and much more detail can be found in Cressie (1993). Say we have some process *Y*(**s**), where the *d*-dimensional location vector **s** is in some study area **D** ⊂ ℝ*ᵈ* (usually *d* = 2, for the geography-minded). It's often advantageous to assume *Y*(**s**) has a Gaussian distribution, because this implies it can be completely described by its mean and covariance. If this is the case and *Y*(**s**) is defined for all **s** &isin; **D**, then *Y*(**s**) is a GRF. Furthermore, if for two arbitrary locations **sᵢ** and **sⱼ** we have cov(*Y*(**sᵢ**), *Y*(**sⱼ**)) = cov(*h*), where *h* = \|\|**sᵢ** - **sⱼ**\|\|, then *Y*(**s**) is stationary (properties don't depend on location) and isotropic (direction doesn't matter).
 
-*plot of exponential variogram model.*
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/variogram.PNG"
+       width="883"
+       height="552"
+     />
+     <figcaption>Exponential variogram model. Sill = 1, nugget = 0.2, range = 10.</figcaption>
+  </figure>
+</div>\
 
 For this type of GRF the covariance structure is often described with the (semi)variogram *&gamma;*(*h*) = cov(0) - cov(*h*), where cov(0) is the sill of the variogram, representing its upper bound as *h* approaches infinity. One common model for *&gamma;*(*h*) is the exponential model, which for *h* > 0 is defined as: 
 

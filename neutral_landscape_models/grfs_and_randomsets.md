@@ -80,6 +80,6 @@ My next post on this topic will go over how we can divide our landscape into som
 
 References
 
-Chiu, S. N., Stoyan, D., Kendall, W. S., & Mecke, J. (2013). Stochastic geometry and its applications. John Wiley & Sons.
+Chiu, S. N., Stoyan, D., Kendall, W. S., & Mecke, J. (2013). *Stochastic geometry and its applications*. John Wiley & Sons.
 
-Cressie, N. (1993). Statistics for spatial data. John Wiley & Sons.
+Cressie, N. (1993). *Statistics for spatial data*. John Wiley & Sons.

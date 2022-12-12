@@ -15,11 +15,11 @@ I'll talk about GRF's briefly--the next couple of paragraphs should be familiar 
 
 *plot of exponential variogram model.*
 
-For this type of GRF the covariance structure is often described with the (semi)variogram &gamma;(*h*) = &sigma;² - cov(*h*), where &sigma;² is the variance. One common model for &gamma;(*h*) is the exponential model: 
+For this type of GRF the covariance structure is often described with the (semi)variogram *&gamma;*(*h*) = *&sigma;*² - cov(*h*), where *&sigma;*² is the partial sill of the variogram (see below). One common model for *&gamma;*(*h*) is the exponential model, which for *h* > 0 is defined as: 
 
-&gamma;(*h*) = &sigma;²(1 - exp(-3*h*/*r*)) + *a*. 
+&gamma;(*h*) = *a*² + *&sigma;*²(1 - exp(-*h*/*r*)), 
 
-*a* describes variation at *h* = 0 and is called the nugget. *r* is the range, a value of *h* at which &gamma;(*h*) approaches an upper bound referred to as the sill. The sill is equal to *a* + &sigma;².
+and is equal to 0 otherwise. *a* describes variation at *h* = 0 and is called the nugget. *r* is the range, a value of *h* at which &gamma;(*h*) approaches an upper bound referred to as the sill. The sill is equal to *a* + *&sigma;*², which is why *&sigma;*² is often referred to as the partial sill.
 
 GRF's are often invoked when working with spatial data--for example, kriging methods assume the surface of interest is a GRF. 
 
@@ -43,10 +43,10 @@ How can we simulate objects like this? The most straightforward way to do so wou
 
 The first step is to decide how to vary the intensity of the germ-generating process throughout our study area. One way we could do this is to simulate an inhomogenous Poisson process: 
 
-*Pr*(*X* = *k*) = &lambda;(**s**)*ᵏ* exp(-&lambda;(**s**)) / *k*!, 
+*Pr*(*X* = *k*) = *&lambda;*(**s**)*ᵏ* exp(*-&lambda;*(**s**)) / *k*!, 
 
-where *k* is some number of events (points) and &lambda;(**s**) is our spatially varying intensity (mean rate of points per unit area). 
-&lambda;(**s**) could be some function of space that's independent of our GRF, e.g. &lambda;(**s**) is proportional to the y coordinate. It might make sense to have the intensity depend on the GRF, though. Doing this would be sort of like having the intensity depend on land cover type (we'll divide our landscape into discrete patches as we go forward, which may make this analogy work better). 
+where *k* is some number of events (points) and *&lambda;*(**s**) is our spatially varying intensity (mean rate of points per unit area). 
+*&lambda;*(**s**) could be some function of space that's independent of our GRF, e.g. *&lambda;*(**s**) is proportional to the y coordinate. It might make sense to have the intensity depend on the GRF, though. Doing this would be sort of like having the intensity depend on land cover type (we'll divide our landscape into discrete patches as we go forward, which may make this analogy work better). 
 
 To accomplish this, we can make the intensity a Gaussian function of the GRF. Adjusting the mean will control the GRF value corresponding to the maximum intensity, and adjusting the variance will control how clustered the process is. 
 

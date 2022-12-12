@@ -47,3 +47,39 @@ The first step is to decide how to vary the intensity of the germ-generating pro
 
 where *k* is some number of events (points) and &lambda;(**s**) is our spatially varying intensity (mean rate of points per unit area). 
 &lambda;(**s**) could be some function of space that's independent of our GRF, e.g. &lambda;(**s**) is proportional to the y coordinate. It might make sense to have the intensity depend on the GRF, though. Doing this would be sort of like having the intensity depend on land cover type (we'll divide our landscape into discrete patches as we go forward, which may make this analogy work better). 
+
+To accomplish this, we can make the intensity a Gaussian function of the GRF. Adjusting the mean will control the GRF value corresponding to the maximum intensity, and adjusting the variance will control how clustered the process is. 
+
+*code, figs*
+
+Next we'll use spatstat to simulate the germs as a Poisson process:
+
+*code, figs*
+
+Since the intensity surface is a GRF derived from our first GRF, we can think of our Poisson process as a Cox process, which is just a Poisson process where the intensity is random.
+
+Now we can create the grains. I'll keep the grain radius distribution uniform, so any value between 2 units and 4 units is equally likely for all germs. We'll sample from this distribution so we have one value for each germ, then create the grains using the st_buffer() function from sf:
+
+*code, figs*
+
+Finally, we can use the random set to replace values in the original GRF. The replacement values will be drawn from a Gaussian noise image, i.e. a GRF with no spatial covariance: 
+
+*code, figs*
+
+Note that this GRF has a relatively small variance compared to our first one.
+
+-----
+
+There's still some work to do before we can test out our radiometric correction methods. We're in a good position now, though, to take a step back and see how efficiently we can run these simulations. What I'd like to do is work with a few hundred images for each unique set of parameters for GRF mean, germ intensity variance, etc. from some list of possible values I'd make for each parameter. Computation time seems, then, like it'll be a relevant issue. ...
+
+-----
+
+My next post on this topic will go over how we can divide our landscape into something like a patch mosaic with each patch containing values drawn from one of several GRF's. Then, I'll address the efficiency issues discussed above, and also introduce nonstationarity to our GRF's, by leveraging the popular INLA approach for approximating GRF's with Gaussian Markov random fields. After all this we'll be in a good position to start evaluating our radiometric correction methods.
+
+-----
+
+References
+
+Chiu, S. N., Stoyan, D., Kendall, W. S., & Mecke, J. (2013). Stochastic geometry and its applications. John Wiley & Sons.
+
+Cressie, N. (1993). Statistics for spatial data. John Wiley & Sons.

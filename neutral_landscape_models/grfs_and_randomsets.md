@@ -15,11 +15,11 @@ I'll talk about GRF's briefly--the next couple of paragraphs should be familiar 
 
 *plot of exponential variogram model.*
 
-For this type of GRF the covariance structure is often described with the (semi)variogram *&gamma;*(*h*) = cov(0) - cov(*h*), where cov(0) is the sill of the variogram, representing its upper bound as *h* approaches infinity. Note that we're describing covariance as the function of a single scalar; if the GRF is stationary and isotropic then covariance should only depend on this distance between locations. One common model for *&gamma;*(*h*) is the exponential model, which for *h* > 0 is defined as: 
+For this type of GRF the covariance structure is often described with the (semi)variogram *&gamma;*(*h*) = cov(0) - cov(*h*), where cov(0) is the sill of the variogram, representing its upper bound as *h* approaches infinity. One common model for *&gamma;*(*h*) is the exponential model, which for *h* > 0 is defined as: 
 
 &gamma;(*h*) = *a* + *&sigma;*²(1 - exp(-*h*/*r*)), 
 
-and is equal to 0 otherwise. *a* describes variation at *h* = 0 and is called the nugget. *r* is the (effective) range, a value of *h* at which &gamma;(*h*) exceeds 95% of the sill *a* + *&sigma;*². *&sigma;*² is referred to as the partial sill.
+and is equal to 0 otherwise. *a* describes variation at *h* = 0 and is called the nugget. *r* is the (effective) range, a value of *h* at which &gamma;(*h*) exceeds 95% of the sill cov(0) = *a* + *&sigma;*². *&sigma;*² is referred to as the partial sill.
 
 GRF's are often invoked when working with spatial data--for example, kriging methods assume the surface of interest is a GRF. 
 

@@ -92,15 +92,19 @@ To accomplish this, we can make the intensity a Gaussian function of the GRF. Ad
 
 Here's how we can make a raster of the intensity:
 {% highlight R %}
+max_intensity_val <- 0.3
+stdev_intensity <- 0.15
+intensity_image <- gf_model
+values(intensity) <- dnorm(as.vector(gf_model), mean=max_intensity_val, sd=stdev_intensity)
+{% endhighlight %}
+
+Next we'll use spatstat to simulate the germs as a Poisson process. Note that we control roughly how many points we want by multiplying the intensity image by a factor:
+{% highlight R %}
 max_prob_val <- 0.3
 stdev_prob <- 0.15
 prob_image <- gf_model
 values(prob_image) <- dnorm(as.vector(gf_model), mean=max_prob_val, sd=stdev_prob)
 {% endhighlight %}
-
-Next we'll use spatstat to simulate the germs as a Poisson process:
-
-*code, figs*
 
 Since the intensity surface is a GRF derived from our first GRF, we can think of our Poisson process as a Cox process, which is just a Poisson process where the intensity is random.
 

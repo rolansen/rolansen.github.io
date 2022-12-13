@@ -79,7 +79,24 @@ where *k* is some number of events (points) and *&lambda;*(**s**) is our spatial
 
 To accomplish this, we can make the intensity a Gaussian function of the GRF. Adjusting the mean will control the GRF value corresponding to the maximum intensity, and adjusting the variance will control how clustered the process is. 
 
-*code, figs*
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/intensity_dists.png"
+       width="662"
+       height="414"
+     />
+     <figcaption>Two Gaussian probability functions. Left: mean=0.3, standard deviation=0.15. Right: mean=0.6, standard deviation=0.03.</figcaption>
+  </figure>
+</div>\
+
+Here's how we can make a raster of the intensity:
+{% highlight R %}
+max_prob_val <- 0.3
+stdev_prob <- 0.15
+prob_image <- gf_model
+values(prob_image) <- dnorm(as.vector(gf_model), mean=max_prob_val, sd=stdev_prob)
+{% endhighlight %}
 
 Next we'll use spatstat to simulate the germs as a Poisson process:
 

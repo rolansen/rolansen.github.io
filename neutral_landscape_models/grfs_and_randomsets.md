@@ -37,7 +37,7 @@ and is equal to 0 otherwise. *a* describes variation at *h* = 0 and is called th
        width="621"
        height="540"
      />
-     <figcaption>Gaussian fields all with the same mean (10) and nugget (0.2) but varying partial sill and range.</figcaption>
+     <figcaption>Simulated Gaussian fields all with the same mean (10) and nugget (0.2) but varying partial sill and range.</figcaption>
   </figure>
 </div>\
 

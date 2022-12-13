@@ -57,8 +57,8 @@ gf_partial_sill <- 0.007
 gf_nug <- 0.002
 gf_mean <- 0.22
 
-gf_model <- nlm_gaussianfield(ncol=lindim, nrow=lindim, autocorr_range=gf_range, mag_var=gf_var, nug=gf_nug, mean=gf_mean, rescale=FALSE)
-gf_model <- reclassify(gf_model, matrix(c(-Inf,0,0, 1,Inf,1), ncol=3, byrow=TRUE)) #ensures values are between 0 and 1
+gfield <- nlm_gaussianfield(ncol=lindim, nrow=lindim, autocorr_range=gf_range, mag_var=gf_var, nug=gf_nug, mean=gf_mean, rescale=FALSE)
+gfield <- reclassify(gfield, matrix(c(-Inf,0,0, 1,Inf,1), ncol=3, byrow=TRUE)) #ensures values are between 0 and 1
 {% endhighlight %}
 I use a low mean and variance and force values to be greater than 0 and less than 1 because I'd like this field to be similar to conceivable visible range surface reflectance measurements. 
 
@@ -94,16 +94,13 @@ Here's how we can make a raster of the intensity:
 {% highlight R %}
 max_intensity_val <- 0.3
 stdev_intensity <- 0.15
-intensity_image <- gf_model
+intensity_image <- gfield
 values(intensity) <- dnorm(as.vector(gf_model), mean=max_intensity_val, sd=stdev_intensity)
 {% endhighlight %}
 
 Next we'll use spatstat to simulate the germs as a Poisson process. Note that we control roughly how many points we want by multiplying the intensity image by a factor:
 {% highlight R %}
-max_prob_val <- 0.3
-stdev_prob <- 0.15
-prob_image <- gf_model
-values(prob_image) <- dnorm(as.vector(gf_model), mean=max_prob_val, sd=stdev_prob)
+
 {% endhighlight %}
 
 Since the intensity surface is a GRF derived from our first GRF, we can think of our Poisson process as a Cox process, which is just a Poisson process where the intensity is random.

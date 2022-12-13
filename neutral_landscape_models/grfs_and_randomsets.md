@@ -119,11 +119,11 @@ germs <- rpoispp(lambda = intensity_im)
 <div style="text-align: center">
   <figure>
       <img
-       src="/assets/intensity_raster.png"
+       src="/assets/germs.png"
        width="621"
        height="540"
      />
-     <figcaption>Germs (black) overlain on the GDF.</figcaption>
+     <figcaption>Germs (black) overlain on the GDF. Note how the germs tend to occur on pixels where the value is around 0.3.</figcaption>
   </figure>
 </div>\
 

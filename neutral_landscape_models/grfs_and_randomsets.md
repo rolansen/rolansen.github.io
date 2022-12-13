@@ -77,7 +77,7 @@ The first step is to decide how to vary the intensity of the germ-generating pro
 where *k* is some number of events (points) and *&lambda;*(**s**) is our spatially varying intensity (mean rate of points per unit area). 
 *&lambda;*(**s**) could be some function of space that's independent of our GRF, e.g. *&lambda;*(**s**) is proportional to the y coordinate. It might make sense to have the intensity depend on the GRF, though. Doing this would be sort of like having the intensity depend on land cover type (we'll divide our landscape into discrete patches as we go forward, which may make this analogy work better). 
 
-To accomplish this, we can make the intensity a Gaussian function of the GRF. Adjusting the mean will control the GRF value corresponding to the maximum intensity, and adjusting the variance will control how clustered the process is. 
+To accomplish this, we can make the intensity a Gaussian function of the GRF. Adjusting the mean will control the GRF value corresponding to the maximum intensity, and adjusting the variance will control how clustered the process is.
 
 <div style="text-align: center">
   <figure>
@@ -86,16 +86,17 @@ To accomplish this, we can make the intensity a Gaussian function of the GRF. Ad
        width="662"
        height="414"
      />
-     <figcaption>Two Gaussian probability functions. Left: mean=0.3, standard deviation=0.15. Right: mean=0.6, standard deviation=0.03.</figcaption>
+     <figcaption>Two Gaussian probability density functions. Left: mean=0.3, standard deviation=0.15. Right: mean=0.6, standard deviation=0.03.</figcaption>
   </figure>
 </div>\
 
-Here's how we can make a raster of the intensity:
+Here's how we can make a raster of the intensity (note that we use a factor to keep the expected number of points in each pixel from being too high):
 {% highlight R %}
 max_intensity_val <- 0.3
 stdev_intensity <- 0.15
+intensity_factor <- 0.005
 intensity_image <- gfield
-values(intensity) <- dnorm(as.vector(gf_model), mean=max_intensity_val, sd=stdev_intensity)
+values(intensity) <- intensity_factor * dnorm(as.vector(gf_model), mean=max_intensity_val, sd=stdev_intensity)
 {% endhighlight %}
 
 <div style="text-align: center">
@@ -109,12 +110,24 @@ values(intensity) <- dnorm(as.vector(gf_model), mean=max_intensity_val, sd=stdev
   </figure>
 </div>\
 
-Next we'll use spatstat to simulate the germs as a Poisson process. Note that we control roughly how many points we want by multiplying the intensity image by a factor:
+Next we'll use spatstat to simulate the germs as a Poisson process:
 {% highlight R %}
-
+intensity_im <- as.im(as.matrix(intensity_raster))
+germs <- rpoispp(lambda = intensity_im)
 {% endhighlight %}
 
-Since the intensity surface is a GRF derived from our first GRF, we can think of our Poisson process as a Cox process, which is just a Poisson process where the intensity is random.
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/intensity_raster.png"
+       width="621"
+       height="540"
+     />
+     <figcaption>Germs (black) overlain on the GDF.</figcaption>
+  </figure>
+</div>\
+
+Since the intensity surface is a random field derived from our first GRF, we can think of our Poisson process as a Cox process, which is just a Poisson process where the intensity is random.
 
 Now we can create the grains. I'll keep the grain radius distribution uniform, so any value between 2 units and 4 units is equally likely for all germs. We'll sample from this distribution so we have one value for each germ, then create the grains using the st_buffer() function from sf:
 

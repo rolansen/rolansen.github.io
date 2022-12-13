@@ -134,7 +134,7 @@ Now we can create the grains. I'll keep the grain radius distribution uniform, s
 min_radius <- 2
 max_radius <- 4
 radii <- runif(n=germs$n, min=min_radius, max=max_radius)
-sf_germs <- st_as_sf(germs)[1:germs$n+1,]
+sf_germs <- st_as_sf(germs)[1:germs$n+1,] #st_as_sf() will add the window as the first row
 sf_germs$radius <- radii
 sf_grains <- st_buffer(sf_germs, dist=sf_germs$radius)
 {% endhighlight %}
@@ -151,10 +151,29 @@ sf_grains <- st_buffer(sf_germs, dist=sf_germs$radius)
 </div>\
 
 Finally, we can use the random set to replace values in the original GRF. The replacement values will be drawn from a Gaussian noise image, i.e. a GRF with no spatial covariance: 
+{% highlight R %}
+noise_dist_mean <- 0.05
+noise_dist_sd <- 0.02
+noise_image <- gfield
+values(noise_image) <- rnorm(ncell(noise_image), mean=noise_dist_mean, sd=noise_dist_sd)
 
-*code, figs*
+gfield_masked <- mask(gf_model, sf_grains, updatevalue=0, inverse=TRUE)
+noise_image_masked <- mask(noise_image, sf_grains, updatevalue=0)
+landscape <- gfield_masked + noise_image_masked
+{% endhighlight %}
 
-Note that this GRF has a relatively small variance compared to our first one.
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/landscape.png"
+       width="621"
+       height="540"
+     />
+     <figcaption>GRF with values replaced by Gaussian noise where pixel centroids are in the random set.</figcaption>
+  </figure>
+</div>\
+
+Note that this GRF has little variation compared to our first one.
 
 -----
 

@@ -146,7 +146,7 @@ sf_grains <- st_buffer(sf_germs, dist=sf_germs$radius)
        width="621"
        height="540"
      />
-     <figcaption>Germs (black) overlain on the GDF. Note how the germs tend to occur on pixels where the value is around 0.3.</figcaption>
+     <figcaption>Grains.</figcaption>
   </figure>
 </div>\
 

@@ -30,6 +30,17 @@ For this type of GRF the covariance structure is often described with the (semi)
 
 and is equal to 0 otherwise. *a* describes variation at *h* = 0 and is called the nugget. *r* is the (effective) range, a value of *h* at which &gamma;(*h*) exceeds 95% of the sill cov(0) = *a* + *&sigma;*². *&sigma;*² is referred to as the partial sill.
 
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/gfs_with_different_params.png"
+       width="621"
+       height="540"
+     />
+     <figcaption>Gaussian fields all with the same mean (10) and nugget (0.2) but varying partial sill and range.</figcaption>
+  </figure>
+</div>\
+
 GRF's are often invoked when working with spatial data--for example, kriging methods assume the surface of interest is a GRF. 
 
 Let's try simulating a stationary, isotropic GRF. We can do this very easily with NLMR. Below I stick with image dimensions of 100 X 100 and the following parameters:

@@ -32,17 +32,26 @@ and is equal to 0 otherwise. *a* describes variation at *h* = 0 and is called th
 
 GRF's are often invoked when working with spatial data--for example, kriging methods assume the surface of interest is a GRF. 
 
-Let's try simulating a stationary, isotropic GRF. We can do this very easily with NLMR:
-
-*code, plots*
-
-I use this low mean and variance and force values to be greater than 0 and less than 1 because I'd like this field to be similar to typical visible range surface reflectance measurements. Below I stick with image dimensions of 100 X 100 and the following parameters:
-* mean = 0.1
-* variance = 0.25
-* nugget = 0.02 
+Let's try simulating a stationary, isotropic GRF. We can do this very easily with NLMR. Below I stick with image dimensions of 100 X 100 and the following parameters:
+* mean = 0.22
+* partial sill = 0.007
+* nugget = 0.002 
 * range = 10 units
+{% highlight R %}
+set.seed(1)
 
-We're using an exponential variogram/covariance model, since that's the only kind allowed by NLMR's nlm_gaussianfield() function. Under the hood nlm_gaussianfield() is using the RandomFields library, and if we'd wanted to use a different covariance model we could have just as easily used RandomFields to simulate the field, convert the resulting object to a matrix, truncated values so they're between 0 and 1, and then converted the matrix to a raster. For now, though, I'll just use nlm_gaussianfield() to keep things simple.  
+lindim <- 100 #width/height of image
+gf_range <- 10
+gf_partial_sill <- 0.007 
+gf_nug <- 0.002
+gf_mean <- 0.22
+
+gf_model <- nlm_gaussianfield(ncol=lindim, nrow=lindim, autocorr_range=gf_range, mag_var=gf_var, nug=gf_nug, mean=gf_mean, rescale=FALSE)
+gf_model <- reclassify(gf_model, matrix(c(-Inf,0,0, 1,Inf,1), ncol=3, byrow=TRUE)) #ensures values are between 0 and 1
+{% endhighlight %}
+I use a low mean and variance and force values to be greater than 0 and less than 1 because I'd like this field to be similar to conceivable visible range surface reflectance measurements. 
+
+We're using an exponential variogram/covariance model, which is the only kind allowed by NLMR's nlm_gaussianfield() function. Under the hood nlm_gaussianfield() is using the RandomFields library, and if we'd wanted to use a different covariance model we could have just as easily used RandomFields to simulate the field, converted the resulting object to a matrix, truncated values so they're between 0 and 1, and then converted the matrix to a raster. For now, though, I'll just use nlm_gaussianfield() to keep things simple.  
 
 -----
 

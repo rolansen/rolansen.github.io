@@ -98,6 +98,17 @@ intensity_image <- gfield
 values(intensity) <- dnorm(as.vector(gf_model), mean=max_intensity_val, sd=stdev_intensity)
 {% endhighlight %}
 
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/intensity_raster.png"
+       width="621"
+       height="540"
+     />
+     <figcaption>Intensity raster.</figcaption>
+  </figure>
+</div>\
+
 Next we'll use spatstat to simulate the germs as a Poisson process. Note that we control roughly how many points we want by multiplying the intensity image by a factor:
 {% highlight R %}
 

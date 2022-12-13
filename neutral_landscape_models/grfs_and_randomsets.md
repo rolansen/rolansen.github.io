@@ -130,8 +130,25 @@ germs <- rpoispp(lambda = intensity_im)
 Since the intensity surface is a random field derived from our first GRF, we can think of our Poisson process as a Cox process, which is just a Poisson process where the intensity is random.
 
 Now we can create the grains. I'll keep the grain radius distribution uniform, so any value between 2 units and 4 units is equally likely for all germs. We'll sample from this distribution so we have one value for each germ, then create the grains using the st_buffer() function from sf:
+{% highlight R %}
+min_radius <- 2
+max_radius <- 4
+radii <- runif(n=germs$n, min=min_radius, max=max_radius)
+sf_germs <- st_as_sf(germs)[1:germs$n+1,]
+sf_germs$radius <- radii
+sf_grains <- st_buffer(sf_germs, dist=sf_germs$radius)
+{% endhighlight %}
 
-*code, figs*
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/grains.png"
+       width="621"
+       height="540"
+     />
+     <figcaption>Germs (black) overlain on the GDF. Note how the germs tend to occur on pixels where the value is around 0.3.</figcaption>
+  </figure>
+</div>\
 
 Finally, we can use the random set to replace values in the original GRF. The replacement values will be drawn from a Gaussian noise image, i.e. a GRF with no spatial covariance: 
 

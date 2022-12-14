@@ -57,7 +57,7 @@ gf_partial_sill <- 0.007
 gf_nug <- 0.002
 gf_mean <- 0.22
 
-gfield <- nlm_gaussianfield(ncol=lindim, nrow=lindim, autocorr_range=gf_range, mag_var=gf_var, nug=gf_nug, mean=gf_mean, rescale=FALSE)
+gfield <- nlm_gaussianfield(ncol=lindim, nrow=lindim, autocorr_range=gf_range, mag_var=gf_partial_sill, nug=gf_nug, mean=gf_mean, rescale=FALSE)
 gfield <- reclassify(gfield, matrix(c(-Inf,0,0, 1,Inf,1), ncol=3, byrow=TRUE)) #ensures values are between 0 and 1
 {% endhighlight %}
 I use a low mean and variance and force values to be greater than 0 and less than 1 because I'd like this field to be similar to conceivable visible range surface reflectance measurements. 

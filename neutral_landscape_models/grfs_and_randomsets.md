@@ -178,7 +178,25 @@ Note that we use fasterize to convert the grains to a raster sampled to the reso
 
 -----
 
-There's still some work to do before we can test out our radiometric correction methods. We're in a good position now, though, to take a step back and see how efficiently we can run these simulations. What I'd like to do is work with a few hundred images for each unique set of parameters for GRF mean, germ intensity variance, etc. from some list of possible values I'd make for each parameter. Computation time seems, then, like it'll be a relevant issue. ...
+There's still some work to do before we can test out our radiometric correction methods. 
+We're in a good position now, though, to take a step back and see how efficiently we can run these simulations. 
+I plan on doing at least a few hundred iterations for each combination of parameters that I decide to work with,
+so computation time will be a relevant issue.
+
+I ran 100 simulations for images with 100-by-100, 300-by-300, and 1000-by-1000 pixels
+Parameters such as the Gaussian field mean, etc., are kept constant here, but in practice I'll vary them.
+
+The table below shows, for each image size, the elapsed time various steps took in total. 
+For example, the first cell of the first row shows how many seconds GRF simulation took, in total, 
+for all 100-by-100-pixel runs.
+
+|   | Gaussian field simulation | Germ intensity image creation | Germ simulation | Grain simulation | Image masking |
+| -------------  | -------------  | -------------  | -------------  |-------------  |-------------  |
+| 100-by-100 | 4.16 s | 0.34 s | 0.45 s | 2.75 s | 1.90 s |
+| 300-by-300 | 29.86 s | 1.44 s | 1.96 s | 13.68 s | 4.11 s |
+| 1000-by-1000 | 323.00 s | 8.55 s | 14.11 s | 86.03 s | 16.06 s |
+
+While all steps seem to take longer as image size increases, GRF simulation and grain simulation stand out. ...
 
 -----
 

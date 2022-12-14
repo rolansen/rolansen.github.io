@@ -4,7 +4,7 @@ I figured it'd be nice to work with simulated landscapes to see how characterist
 like the presence of objects like trees and houses, affect these methods' performances.  
 Here I talk about how we'd begin to approach doing that sort of thing
 using Gaussian random fields and random sets.
-Simulations are ran with R and the libraries NLMR, spatstat, raster, and sf.**
+Simulations are ran with R and the libraries NLMR, spatstat, raster, sf, and fasterize.**
 
 -----
 
@@ -129,7 +129,7 @@ germs <- rpoispp(lambda = intensity_im)
 
 Since the intensity surface is a random field derived from our first GRF, we can think of our Poisson process as a Cox process, which is just a Poisson process where the intensity is random.
 
-Now we can create the grains. I'll keep the grain radius distribution uniform, so any value between 2 units and 4 units is equally likely for all germs. We'll sample from this distribution so we have one value for each germ, then create the grains using the st_buffer() function from sf:
+Now we can create the grains. I'll keep the grain radius distribution uniform, so any value between 2 units and 4 units is equally likely for all germs. We'll sample from this distribution so we have one value for each germ, then create the grains using sf::st_buffer():
 {% highlight R %}
 min_radius <- 2
 max_radius <- 4
@@ -157,8 +157,9 @@ noise_dist_sd <- 0.02
 noise_image <- gfield
 values(noise_image) <- rnorm(ncell(noise_image), mean=noise_dist_mean, sd=noise_dist_sd)
 
-gfield_masked <- mask(gf_model, sf_grains, updatevalue=0, inverse=TRUE)
-noise_image_masked <- mask(noise_image, sf_grains, updatevalue=0)
+grain_raster <- fasterize(sf_grains, noise_image)
+gfield_masked <- mask(gf_model, grain_raster, updatevalue=0, inverse=TRUE)
+noise_image_masked <- mask(noise_image, grain_raster, updatevalue=0)
 landscape <- gfield_masked + noise_image_masked
 {% endhighlight %}
 
@@ -173,7 +174,7 @@ landscape <- gfield_masked + noise_image_masked
   </figure>
 </div>\
 
-Note that this GRF has little variation compared to our first one.
+Note that we use fasterize to convert the grains to a raster sampled to the resolution of the other images, which speeds up raster::mask(), and that the noise GRF has little variation compared to our first one.
 
 -----
 

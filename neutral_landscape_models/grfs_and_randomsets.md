@@ -180,7 +180,8 @@ Note that we use fasterize to convert the grains to a raster sampled to the reso
 
 There's still some work to do before we can test out our radiometric correction methods. 
 We're in a good position now, though, to take a step back and see how efficiently we can run these simulations. 
-I plan on doing at least a few hundred iterations for each combination of parameters that I decide to work with,
+I plan on doing at least a few hundred iterations for each combination of parameters that I decide to work with
+and working with much larger rasters than the ones I did for this post,
 so computation time will be a relevant issue.
 
 I ran 100 simulations for images with 100-by-100, 300-by-300, and 1000-by-1000 pixels
@@ -196,11 +197,11 @@ for all 100-by-100-pixel runs.
 | 300-by-300 | 29.86 s | 1.44 s | 1.96 s | 13.68 s | 4.11 s |
 | 1000-by-1000 | 323.00 s | 8.55 s | 14.11 s | 86.03 s | 16.06 s |
 
-While all steps seem to take longer as image size increases, GRF simulation and grain simulation stand out. ...
+While all steps seem to take longer as image size increases, GRF simulation and grain simulation stand out. It's known that GRF's can be efficiently approximated with Gaussian Markov random fields (GMRF's), and it's possible that the grain raster could be generated more efficiently by running raster::cellFromXY() and then repeatedly running raster::adjacent(). I plan on trying both of these approaches going forward. 
 
 -----
 
-My next post on this topic will go over how we can divide our landscape into something like a patch mosaic with each patch containing values drawn from one of several GRF's. Then, I'll address the efficiency issues discussed above and also introduce nonstationarity to our GRF's by using the popular INLA approach for approximating GRF's with Gaussian Markov random fields. After all this we'll be in a good position to start evaluating our radiometric correction methods.
+My next post on this topic will go over how we can divide our landscape into something like a patch mosaic with each patch containing values drawn from one of several GRF's. Then, I'll address the efficiency issues discussed above and also introduce nonstationarity to our GRF's by using the popular INLA approach for approximating GRF's with GMRF's. After all this we'll be in a good position to start evaluating our radiometric correction methods.
 
 -----
 

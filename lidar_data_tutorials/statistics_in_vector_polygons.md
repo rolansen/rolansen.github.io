@@ -44,7 +44,7 @@ Aerial lidar can help us easily compute both of the variables we're interested i
 
 Both the lidar and the polygons use the coordinate reference system specified by EPSG:6350. The code below assumes both datasets are in the same directory.
 
-If we were to do something like this in practice, we’d probably be segmenting trees rather than working with polygons. I’ll go over how we can do this in a future post. Also, several of the polygons I drew will include some returns from rootftops. I’ll discuss how to handle that in the future, as well, but for now a few LAI estimates will be affected.
+If we were to do something like this in practice, we’d probably be segmenting trees from the point cloud rather than working with pre-defined polygons. I’ll go over how we can do this in a future post. Also, several of the polygons I drew will include some returns from rootftops. I’ll discuss how to handle that in the future, as well, but for now a few LAI estimates will be affected.
 
 -----
 
@@ -74,7 +74,7 @@ np_las = np.transpose(np.vstack([las.x, las.y, las.z, las.classification, las.sc
 Note that we need to multiply the scan angle dimension by a factor to get actual scan angles. See [this comment](https://github.com/ASPRSorg/LAS/issues/41#issuecomment-344300998) for an in-depth explanation.
 In practice, we might want to make an array from more than one lidar file, in which case something like this could be helpful: 
 {% highlight Python %}
-np.append(np_las_1, np_las_2, axis=0)
+merged_np_las = np.append(np_las_1, np_las_2, axis=0)
 {% endhighlight%}
 
 Next, we’ll make a spatial index. *k*-D trees are popular spatial indexes for point clouds because they can efficiently answer nearest neighbor queries (what are the *n* nearest neighbors?) and range queries (what are the neighbors within a distance *r* from some point?) on point datasets. Let's use [SciPy’s implementation.](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.KDTree.html) Since we’re only concerned with finding which returns have (x,y) coordinates that fall in polygons, we’ll build the tree for just those dimensions. Xiao (2015) gives a nice introduction to *k*-D trees that's geared towards GIS folks, if you'd like to learn more. 
@@ -96,7 +96,7 @@ kdtree_las_xy = KDTree(np_las[:, :2])
 
 Now we’re ready to calculate the variables of interest. For each polygon:
 
-* Do a range query to find the points with (x,y) coordinates near the polygon. I like to use the centroid of the polygon's minimum bounding rectangle as the reference point, and a range that’s slightly larger than the minimum enclosing circle of the rectangle. This way the query's guaranteed to include each point in the polygon and also makes it less likely that we won't exclude many ground returns. Below we use a buffer of 2 meters for the minimum enclosing circle.
+* Do a range query to find the points with (x,y) coordinates near the polygon. I like to use the centroid of the polygon's minimum bounding rectangle as the reference point, and a range that’s slightly larger than the minimum enclosing circle of the rectangle. That way the query's guaranteed to include each point in the polygon and also makes it less likely that we won't exclude many ground returns. Below we use a buffer of 2 meters for the minimum enclosing circle.
 {% highlight Python %}
 #"poly" is a row returned by GeoDataFrame.iterrows()
 search_radius_buffer = 2
@@ -183,7 +183,7 @@ tree_polys.at[index, 'lai'] = -np.cos(mean_lidar_scanning_angle) / lambert_beer_
 {% endhighlight %}
 Note we consider a return to be a ground return if its height above ground is less than or equal to 5 cm.
 
-When we're finished, we can write the polygons with their new fields to a file:
+When we're finished, we can write the polygons with new, lidar-derived fields to a file:
 {% highlight Python %}
 output_path = 'canopy_polygons_with_height_and_lai.geojson'
 tree_polys.to_file(output_path)

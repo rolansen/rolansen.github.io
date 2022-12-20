@@ -197,7 +197,7 @@ for all 100-by-100-pixel runs.
 | 300-by-300 | 29.86 s | 1.44 s | 1.96 s | 13.68 s | 4.11 s |
 | 1000-by-1000 | 323.00 s | 8.55 s | 14.11 s | 86.03 s | 16.06 s |
 
-
+\
 While all steps seem to take longer as image size increases, GRF simulation and grain simulation stand out. It's known that GRF's can be more efficiently approximated with Gaussian Markov random fields (GMRF's), and it's possible that the grain raster could be generated more efficiently by running *raster::cellFromXY()* and then repeatedly running *raster::adjacent()*. I plan on trying both of these approaches going forward. 
 
 -----

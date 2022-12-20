@@ -1,5 +1,5 @@
-Aerial photographs can be helpful sources of environmental data when fine detail is needed or long-term change is of interest. 
-Many aerial images date back to the early 20th century, and their grain size isn't rivaled by any satellite imagery that can be worked with for free 
+Aerial photographs can be helpful sources of environmental data when one is interested in fine detail or long-term changes. 
+Many aerial images date back to the early 20th century, and their grain sizes aren't rivaled by any satellite imagery that can be worked with for free 
 (or without a security clearance). 
 Aerial imagery has a reputation for being outmoded (Morgan et. al., 2010), but nevertheless is still being used in industry and research today. 
 An interesting example is given by Suraci et. al. (2020); the authors used telemetry data and classified aerial imagery to show how patch size, 
@@ -7,7 +7,7 @@ patch configuration, and building density drives puma movement in developed land
 
 Unfortunately, digital numbers (DN's) of digital aerial images are generally physically meaningless, 
 so they can't be used to accurately estimate things like spectral indices. 
-Also, there are usually systematic differences in DN's between images making up a time series due to contrasting illumination conditions 
+Also, there are usually systematic differences in DN's between images which capture the same area at different times due to contrasting illumination conditions 
 and image processing procedures, limiting aerial imagery's capacity for supporting long-term, fine-scale landscape change monitoring. 
 
 We can solve these problems by radiometrically correcting the aerial images we're working with, 
@@ -43,7 +43,7 @@ These kinds of training sets may be necessary to get the best performance out of
 Several other methods for radiometric correction, namely "absolute" methods, require the use of field data, 
 but this is not always practical depending on the user's available resources, especially if the aerial images were collected a few decades ago.
 
-Histogram matching does have some obvious drawbacks. It works well if the relationship between aerial DN's and satellite reflectances is constant throughout the area of interest. Despite common measures such as BRDF correction, there are several reasons why this may not be true. One is that aerial images are often delivered as mosaics, and seamline data which allows us to separate the original images making up the mosaic may not always be available. Often these images will have been collected at different times of day, not to mention different dates (more on that below). Color balancing of the original images while mosaicing exacerbates things.  
+Histogram matching does have some obvious drawbacks. It works well if the relationship between aerial DN's and satellite reflectances is constant throughout the area of interest. Despite common measures such as BRDF correction, there are several reasons why this may not be true. One is that aerial images are often delivered as mosaics, and seamline data which allows us to separate the original images making up the mosaic may not always be available. Often these images will have been collected at different times of day, not to mention different day of the year (more on that below). Color balancing of the original images while mosaicing exacerbates things.  
 
 Can we come up with a way to do histogram matching that accounts for these inconsistences? I think so. A starting point would be to just define a grid over the area of interest, then within each grid cell match our aerial image to a multispectral satellite image captured around the same time. I'll call this approach "localized traditional histogram matching" from here onwards.
 
@@ -75,15 +75,15 @@ It seems very possible that we'd see some clear breaks in the image along the bo
 </div>\
 
 
-Increasing the granularity of the grid lessens these effects, as I discuss below. 
+Increasing the granularity of the grid lessens these effects, as I discuss below, but they never seem to disappear entirely.
 
-How could we address these discontinuities? Adaptive histogram equalization, a popular technique for image contrast enhancement, addresses this sort of thing by finding the 4 nearest (2 nearest for pixels near edges, nearest for pixels near corners) grid cells to each pixel, applying histogram equalization functions defined for each grid cell to the pixel, then interpolating the outputs based on the pixels' proximities to each grid cell center. It's pretty straightforward to do something analogous with histogram matching--let's call this approach "adaptive histogram matching." [Here's an R script](https://github.com/rolansen/rolansen.github.io/blob/main/code/ahm_no_subgrid.R) defining a function that will do this for us. It requires the libraries [terra](https://cran.r-project.org/web/packages/terra/index.html) and [sf](https://cran.r-project.org/web/packages/sf/index.html). After running the script, the user can correct their imagery with a command like this: 
+How could we address these discontinuities? [Adaptive histogram equalization](https://en.wikipedia.org/wiki/Adaptive_histogram_equalization), a popular technique for image contrast enhancement, addresses this sort of thing by finding the 4 nearest (2 nearest for pixels near edges, nearest for pixels near corners) grid cells to each pixel, applying histogram equalization functions defined for each grid cell to the pixel, then interpolating the outputs based on the pixels' proximities to each grid cell center. It's pretty straightforward to do something analogous with histogram matching--let's call this approach "adaptive histogram matching." [Here's an R script](https://github.com/rolansen/rolansen.github.io/blob/main/code/ahm_no_subgrid.R) defining a function that will do this for us. It requires the libraries [terra](https://cran.r-project.org/web/packages/terra/index.html) and [sf](https://cran.r-project.org/web/packages/sf/index.html). After running the script, the user can correct their imagery with a command like this: 
 {% highlight R %}
 ahm(aoi_poly, aerial_path, sat_paths, c_region_size, grid_lindim_length, out_name)
 {% endhighlight %}
 The arguments are as follows:
-* *aoi_poly* is an sf-tibble or sf-data.frame containing one polygon which contains each pixel from the aerial image we'd like to correct
-* *aerial_path* is the path to an aerial image file. This and each file listed in *sat_paths* can take any GDAL-readable format
+* *aoi_poly* is an sf-tibble or sf-data.frame containing one polygon which contains each pixel from the aerial image that we'd like to correct
+* *aerial_path* is the path to an aerial image file. This and each file listed in *sat_paths* can be in any GDAL-readable format
 * *sat_paths* is a character vector listing the paths for each satellite band file. Each path should be listed in the same order as the corresponding bands from the aerial image file
 * *c_region_size* is the length of the width and height for the "computational region" of each grid cell, in the units of the aerial image's coordinate reference system. Pixels falling in the computational region, which is centered on the corresponding grid cell's centroid, will be used to find the distribution of pixel values for that cell.
 * *grid_lindim_length* is the length of each grid cell's width and height, in the units of the aerial image's coordinate reference system.
@@ -109,7 +109,7 @@ In addition to writing a file for the corrected image, the function will output 
   </figure>
 </div>\
 
-The script is very much a work in progress, and likely has several bugs. I'll improve flexibility and efficiency going forward. Things I plan on doing in the future include making the aoi_poly and output files optional, putting in an option for returning a SpatRaster object, allowing both the aerial imagery and the satellite imagery to have their respective bands placed in one or multiple files, adding behavior allowing for a number of output bands other than 3, and making a faster interpolation step. I'll update this post as I do these things. I'd also like to try implementing this method with Google Earth Engine. 
+The script is very much a work in progress, and likely has several bugs. I'll improve flexibility and efficiency going forward. Things I plan on doing in the future include making *aoi_poly* and output files optional, putting in an option for returning a SpatRaster object, allowing both the aerial imagery and the satellite imagery to have their respective bands placed in one or multiple files, adding behavior allowing for a number of output bands other than 3, and making interpolation faster. I'll update this post as I do these things. I'd also like to try implementing this method with Google Earth Engine. 
 
 Let's try applying adaptive histogram matching to the scene I described above. I used a grid cell and computational region width/height of 300 meters. We can see that the discontinuities have been smoothed over.
 
@@ -129,7 +129,7 @@ Tuominen & Pekkinaren (2004) introduced another simple, empirical approach for r
 *y* = *x* · *S* / *X*, 
 
 where *S* is the mean value of pixels in the satellite image which are part of some "group" defined for the pixel of interest, *X* is the mean value of aerial pixels in the group, and once again *x* and *y* are the original and corrected values for the aerial pixel of interest, respectively. 
-They defined a "group" to be any one of the following: a) a satellite pixel and all coincident aerial pixels, b) all pixels within some radius of the pixel of interest, c) segments of the aerial image. They found the first method didn't work well. The process of image segmentation would also introduce its own set of problems, since the best parameters for most segmentation algorithms will likely vary from image to image. However, we can easily try out something like the radius-based method--I did this here, although rather than working with a circle, as they suggest, I just used the focal() function from the terra package to run a moving window across the imagery. 
+They defined a "group" to be any one of the following: a) a satellite pixel and all coincident aerial pixels, b) all pixels within some radius of the pixel of interest, c) segments of the aerial image. They found the first method didn't work well. The process of image segmentation would also introduce its own set of problems, since the best parameters for most segmentation algorithms will likely vary from image to image. However, we can easily try out something like the radius-based method--I did this here, although rather than working with a circle, as they suggest, I just used the *focal()* function from the terra package to run a moving window across the imagery. 
 
 Let's see how each method performed, compared to traditional histogram matching. I applied 4 grid cell (or window) sizes: 600 meters, 300 meters, 150 meters, and 39 meters; only the latter size was applied for the method described by Tuominen & Pekkarinen (2004), since the larger sizes seemed to be computationally impractical. I resampled each corrected image to the resolution of the Sentinel-2 image, taking the average of the corrected aerial pixels, then found the difference between each low-resolution corrected image and the Sentinel-2 image. Results are shown in the tables and images below. 
 
@@ -197,9 +197,9 @@ Performance is apparently worse around heterogenous areas for all methods, no ma
 
 We can probably improve accuracy by considering spectral similarity between neighboring pixels in addition to spatial relationships. The most obvious way to do this would be to cluster the imagery, then only consider pixels from one cluster at a time when estimating reflectance. Another option would be to somehow consider spectral distances, in addition to spatial distances. We could also try segmentation as Tuominen & Pekkarinen (2004) suggest, and while as I mentioned above parameterization could be an obstacle, it seems like a promising option if the user doesn't mind engaging in some trial and error. 
 
-What are the advantages adaptive histogram matching provides over the method described by Tuominen & Pekkarinen (2004)? It seems to be comparably accurate but avoids the visual artifacts introduced by the moving window approach for that method and the often-tricky parameterization that comes with the segmentation approach for that method. It's also generally faster, from my experience, especially with a coarse grid. I think these advantages could make adaptive histogram matching a good option when the user wishes to use the imagery something like object recognition *after* they radiometrically correct it.
+What are the advantages adaptive histogram matching provides over the method described by Tuominen & Pekkarinen (2004)? It seems to be comparably accurate but avoids the visual artifacts introduced by the moving window approach for that method and the often-tricky parameterization that comes with the segmentation approach for that method. It's also generally faster, from my experience, especially with a coarse grid. I think these advantages could make adaptive histogram matching a good option when the user wishes to use the imagery for something like object recognition *after* they radiometrically correct it.
 
-In future posts I'll further discuss the effects of varying grid cell size and of incorporating image classification. I'm also writing a series of posts on neutral landscape models, random fields, and conditional autoregressive models. While I'm working on these I'll also write about how well adaptive histogram matching works on simulated landscapes. What's an ideal grid cell size, given some level of autocorrelation and non-stationarity in the landscape, and some small discrete objects with different "optical" properties than those of the "background" surface? How can we incorporate clustering or spectral distances to improve performance?
+In future posts I'll further discuss the effects of varying grid cell size and of incorporating image classification. I'm also writing a series of posts on landscape simulation with random fields, and while I'm working on these I'll also write about how well adaptive histogram matching works on simulated landscapes. What's an ideal grid cell size, given some level of autocorrelation and non-stationarity in the landscape, and some small discrete objects with different "optical" properties than those of the "background" surface? 
 
 -----
 

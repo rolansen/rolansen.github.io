@@ -4,4 +4,4 @@
 
 [Radiometric correction of aerial imagery](/radiometric_correction/home.md)
 
-[Landscape simulation](/neutral_landscape_models/home.md)
+[Landscape simulation](/landscape_simulation/home.md)

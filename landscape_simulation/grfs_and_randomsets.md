@@ -1,6 +1,6 @@
 **In [another post](https://rolansen.github.io/radiometric_correction/local_histogram_correction.html), 
 I discuss a few approaches for radiometrically correcting aerial imagery and evaluate their accuracy using real imagery. 
-I figured it'd be nice to work with simulated landscapes to see how characteristics of the imagery, 
+I figured it'd be nice to test them out on simulated landscapes to see how characteristics of the imagery, 
 like the presence of objects like trees and houses, affect these methods' performances.  
 Here I talk about how we'd begin to approach doing that sort of thing
 using Gaussian random fields and random sets.
@@ -11,7 +11,7 @@ Simulations are ran with R and the libraries NLMR, spatstat, raster, sf, and fas
 The first thing I'd like to look at are the effects of spatial (auto)covariance. 
 One way to do this is to repeatedly simulate a Gaussian random field (GRF) and adjust the mean and covariance function's parameters (sill, range, nugget). 
 
-I'll talk about GRF's briefly--the next couple of paragraphs should be familiar to those who have worked with geostatistics, and much more detail can be found in Cressie (1993). Say we have some process *Y*(**s**), where the *d*-dimensional location vector **s** is in some study area **D** ⊂ ℝ*ᵈ* (usually *d* = 2, for the geography-minded). It's often advantageous to assume *Y*(**s**) has a Gaussian distribution, because this implies it can be completely described by its mean and covariance. If this is the case and *Y*(**s**) is defined for all **s** &isin; **D**, then *Y*(**s**) is a GRF. Furthermore, if for two arbitrary locations **sᵢ** and **sⱼ** we have cov(*Y*(**sᵢ**), *Y*(**sⱼ**)) = cov(*h*), where *h* = \|\|**sᵢ** - **sⱼ**\|\|, then *Y*(**s**) is stationary (properties don't depend on location) and isotropic (direction doesn't matter).
+I'll talk about GRF's briefly--the next couple of paragraphs should be familiar to those who have worked with geostatistics, and much more detail can be found in Cressie (1993). Say we have some process *Y*(**s**), where the *d*-dimensional location vector **s** is in some study area **D** ⊂ ℝ*ᵈ* (usually *d* = 2, for the geography-minded). It's often advantageous to assume *Y*(**s**) has a Gaussian distribution, because this implies it can be completely described by its mean and covariance. If this is the case and *Y*(**s**) is defined for all **s** &isin; **D**, then *Y*(**s**) is a GRF. Furthermore, if for two arbitrary locations **sᵢ** and **sⱼ** we have cov(*Y*(**sᵢ**), *Y*(**sⱼ**)) = cov(*h*), where *h* = \|\|**sᵢ** - **sⱼ**\|\|, then *Y*(**s**) is stationary (properties don't depend on location) and isotropic (direction between two locations doesn't matter).
 
 <div style="text-align: center">
   <figure>
@@ -37,7 +37,7 @@ and is equal to 0 otherwise. *a* describes variation at *h* = 0 and is called th
        width="621"
        height="540"
      />
-     <figcaption>Simulated Gaussian fields all with the same mean (10) and nugget (0.2) but varying partial sill and range. Each image is 100 by 100 pixels.</figcaption>
+     <figcaption>Simulated Gaussian fields all with exponential covariance functions and the same mean (10) and nugget (0.2), but varying partial sill and range. Each image is 100 by 100 pixels.</figcaption>
   </figure>
 </div>\
 
@@ -60,9 +60,9 @@ gf_mean <- 0.22
 gfield <- nlm_gaussianfield(ncol=lindim, nrow=lindim, autocorr_range=gf_range, mag_var=gf_partial_sill, nug=gf_nug, mean=gf_mean, rescale=FALSE)
 gfield <- reclassify(gfield, matrix(c(-Inf,0,0, 1,Inf,1), ncol=3, byrow=TRUE)) #ensures values are between 0 and 1
 {% endhighlight %}
-I use a low mean and variance and force values to be greater than 0 and less than 1 because I'd like this field to be similar to conceivable visible range surface reflectance measurements. 
+I use a low mean and variance and force values to be greater than 0 and less than 1 because I'd like this field to be similar to visible range surface reflectance measurements. 
 
-We're using an exponential variogram/covariance model, which is the only kind allowed by NLMR's nlm_gaussianfield() function. Under the hood nlm_gaussianfield() is using the RandomFields library, and if we'd wanted to use a different covariance model we could have just as easily used RandomFields to simulate the field, converted the resulting object to a matrix, truncated values so they're between 0 and 1, and then converted the matrix to a raster. For now, though, I'll just use nlm_gaussianfield() to keep things simple.  
+We're using an exponential variogram/covariance model, which is the only kind allowed by NLMR's *nlm_gaussianfield()* function. Under the hood *nlm_gaussianfield()* is using the RandomFields library, and if we'd wanted to use a different covariance model we could have just as easily used RandomFields to simulate the field, converted the resulting object to a matrix, truncated values so they're between 0 and 1, and then converted the matrix to a raster. For now, though, I'll just use *nlm_gaussianfield()* to keep things simple.  
 
 -----
 
@@ -129,7 +129,7 @@ germs <- rpoispp(lambda = intensity_im)
 
 Since the intensity surface is a random field derived from our first GRF, we can think of our Poisson process as a Cox process, which is just a Poisson process where the intensity is random.
 
-Now we can create the grains. I'll keep the grain radius distribution uniform, so any value between 2 units and 4 units is equally likely for all germs. We'll sample from this distribution so we have one value for each germ, then create the grains using sf::st_buffer():
+Now we can create the grains. I'll keep the grain radius distribution uniform, so any value between 2 units and 4 units is equally likely for all germs. We'll sample from this distribution so we have one value for each germ, then create the grains using *sf::st_buffer()*:
 {% highlight R %}
 min_radius <- 2
 max_radius <- 4
@@ -197,7 +197,8 @@ for all 100-by-100-pixel runs.
 | 300-by-300 | 29.86 s | 1.44 s | 1.96 s | 13.68 s | 4.11 s |
 | 1000-by-1000 | 323.00 s | 8.55 s | 14.11 s | 86.03 s | 16.06 s |
 
-While all steps seem to take longer as image size increases, GRF simulation and grain simulation stand out. It's known that GRF's can be efficiently approximated with Gaussian Markov random fields (GMRF's), and it's possible that the grain raster could be generated more efficiently by running raster::cellFromXY() and then repeatedly running raster::adjacent(). I plan on trying both of these approaches going forward. 
+
+While all steps seem to take longer as image size increases, GRF simulation and grain simulation stand out. It's known that GRF's can be more efficiently approximated with Gaussian Markov random fields (GMRF's), and it's possible that the grain raster could be generated more efficiently by running *raster::cellFromXY()* and then repeatedly running *raster::adjacent()*. I plan on trying both of these approaches going forward. 
 
 -----
 

@@ -193,6 +193,17 @@ Pixel values from all methods are more similar to those of the Sentinel-2 imager
 
 The method described by Tuominen & Pekkinaren (2004) gave lesser differences than any of the histogram matching methods, but unlike them is prone to "washing out" values where a surface is much brighter or darker than an adjacent surface, as shown by the image below. This is due to my use of the moving window method for defining groups of pixels; segmentation might have given much better results. 
 
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/tuominen_artifact_1.PNG"
+       width="344"
+       height="246"
+     />
+     <figcaption>Aerial imagery radiometrically corrected with method described by Tuominen & Pekkinaren (2004). Groups of pixels were defined with a moving window. Note how pixels in the field near the relatively bright rooftop tend to be much brighter than other pixels in the same field. </figcaption>
+  </figure>
+</div>\
+
 Performance is apparently worse around heterogenous areas for all methods, no matter the grid cell dimensions. This may partially be due to the resampling method--rather than finding a simple average, it would have been more realistic to model the contribution of each aerial pixel's reflectance to satellite pixel reflectances with a point spread function (Townshend et. al., 2000). The resampling method probably isn't the only reason, though, given the other things just discussed.
 
 We can probably improve accuracy by considering spectral similarity between neighboring pixels in addition to spatial relationships. The most obvious way to do this would be to cluster the imagery, then only consider pixels from one cluster at a time when estimating reflectance. Another option would be to somehow consider spectral distances, in addition to spatial distances. We could also try segmentation as Tuominen & Pekkarinen (2004) suggest, and while as I mentioned above parameterization could be an obstacle, it seems like a promising option if the user doesn't mind engaging in some trial and error. 

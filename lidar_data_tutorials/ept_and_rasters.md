@@ -8,7 +8,7 @@ Additionally, EPT support in most GIS software, with the notable exception of [Q
 
 In addition to ept-python, the user will need to install rasterio, geopandas (optionally pyogrio), shapely, [nest_asyncio,](https://pypi.org/project/nest-asyncio/) and some of the libraries typically included with scientific Python distributions: numpy, scipy, and matplotlib. We'll also be working with asyncio, so the user will need a recent version of Python. 
 
-Here's the full list of imports:
+For convenience, ere's the full list of imports:
 
 {% highlight Python %}
 import rasterio
@@ -59,3 +59,28 @@ workunit_boundary = workunit_boundary_not_proj.to_crs(srid)
      <figcaption>Boundary for work unit "NC_Phase4_Rowan_2017." CRS is EPSG:3857</figcaption>
   </figure>
 </div>\
+
+Now we'll use this boundary to define our raster of interest. We'll be using rasterio to read and write our raster data, allowing us to take advantage of the always-helpful numpy and scipy packages for	our image processing tasks. 
+
+We could just manually define our raster's extent, CRS, and spatial resolution. However, it often it makes sense to sample a DHM to another raster of interest so they can be compared. Let's work with [National Land Cover Database (NLCD) data](https://www.mrlc.gov/), so later we can look a bit into any relationships between height and land cover (LC). We'll go with NLCD data from 2016, since it's close to the vintage of the lidar work unit. If you like you could [download the ERDAS .img file from the Multi-Resolution Land Characteristics Consortium](https://www.mrlc.gov/data/nlcd-2016-land-cover-conus), which will take up about 30 GB after being unzipped. I'll make a request from [their WMS site](https://www.mrlc.gov/geoserver/mrlc_display/wms?service=WMS&request=GetCapabilities), though, so we can get into a quick tangent about reading WMS data to rasterio.
+
+Either way, we'll want to limit the data we read to the work unit's bounding box. Below I set parameters we'll use to make our WMS request--namely, the width, height, and bounding box--using the geometry of the work unit we just read. The CRS will be that which we projected this geometry to, EPSG:3857. The width and height are set so the spatial resolution is 30 meters and the work unit's bounding box is covered. Note the image will still be resampled because it's being reprojected and we aren't considering the CRS's origin. After setting the parameters, we request a GeoTIFF and just read it as a bytes object.
+
+{% highlight Python %}
+#set parameters
+#we increase bounding box and calculate image width/height to get the smallest raster with 30 m pixels which contains the workunit's bbox
+pixel_lindim_length = 30 #in meters
+workunit_bbox = np.asarray(workunit_boundary.bounds)[0] #xmin, ymin, xmax, ymax
+workunit_width = workunit_bbox[2] - workunit_bbox[0]
+workunit_height = workunit_bbox[3] - workunit_bbox[1]
+img_bbox = [workunit_bbox[0], workunit_bbox[1], \
+                     workunit_bbox[2] + pixel_lindim_length - workunit_width % pixel_lindim_length, \
+                     workunit_bbox[3] + pixel_lindim_length - workunit_height % pixel_lindim_length] #this variable and others here appear later
+img_width = int(workunit_width // pixel_lindim_length) + 1 #workunit_width is np.float64, need to cast
+img_height = int(workunit_height // pixel_lindim_length) + 1
+img_bbox_str = ','.join([str(_) for _ in img_bbox])
+
+#request NLCD 2016 from WMS
+nlcd_url = f'https://www.mrlc.gov/geoserver/mrlc_display/wms/v2?service=WMS&version=1.3.0&request=GetMap&layers=NLCD_2016_Land_Cover_L48&format=image/geotiff&width={img_width}&height={img_height}&bbox={img_bbox_str}&styles=&srs=EPSG:{srid}'
+nlcd_bytes = urlopen(nlcd_url).read()
+{% endhighlight %}

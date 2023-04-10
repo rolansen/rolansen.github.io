@@ -8,6 +8,30 @@ Additionally, EPT support in most GIS software, with the notable exception of [Q
 
 In addition to ept-python, the user will need to install rasterio, geopandas (optionally pyogrio), shapely, [nest_asyncio,](https://pypi.org/project/nest-asyncio/) and some of the libraries typically included with scientific Python distributions: numpy, scipy, and matplotlib. We'll also be working with asyncio, so the user will need a recent version of Python. 
 
+Here's the full list of imports:
+
+{% highlight Python %}
+import rasterio
+from rasterio.windows import Window
+from rasterio.io import MemoryFile
+from rasterio.warp import calculate_default_transform, reproject, Resampling
+from rasterio.sample import sample_gen
+from rasterio.mask import mask
+from pyogrio import read_dataframe #delete this line if pyogrio is not installed, and instead use geopandas
+from shapely.geometry import Polygon
+import ept
+from scipy.ndimage import label, convolve
+from scipy.interpolate import griddata
+from scipy.stats import f_oneway
+import numpy as np
+import matplotlib.pyplot as plt
+import nest_asyncio
+from aiohttp import ClientSession
+import asyncio
+from urllib.request import urlopen
+import os
+{% endhighlight %}
+
 -----
 
 Our primary goal will be to create a digital height model (DHM) representing height above ground elevation. To prepare for downloading the lidar we'll use to create our DHM, we need to get the following:

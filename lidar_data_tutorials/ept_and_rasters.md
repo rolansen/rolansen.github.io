@@ -24,3 +24,14 @@ srid = 3857 #EPT service uses EPSG:3857, and we'll project workunit boundary to 
 workunit_boundary_not_proj = read_dataframe('path\\to\\WESM.gpkg', layer='WESM', where="workunit = 'NC_Phase4_Rowan_2017'") #this reads to GeoDataFrame, use geopandas instead if you don't have pyogrio
 workunit_boundary = workunit_boundary_not_proj.to_crs(srid)
 {% endhighlight %}
+
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/workunit_boundary.png"
+       width="482"
+       height="413"
+     />
+     <figcaption>Boundary for work unit "NC_Phase4_Rowan_2017." CRS is EPSG:3857</figcaption>
+  </figure>
+</div>\

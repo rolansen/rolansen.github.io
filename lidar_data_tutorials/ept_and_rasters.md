@@ -84,3 +84,18 @@ img_bbox_str = ','.join([str(_) for _ in img_bbox])
 nlcd_url = f'https://www.mrlc.gov/geoserver/mrlc_display/wms/v2?service=WMS&version=1.3.0&request=GetMap&layers=NLCD_2016_Land_Cover_L48&format=image/geotiff&width={img_width}&height={img_height}&bbox={img_bbox_str}&styles=&srs=EPSG:{srid}'
 nlcd_bytes = urlopen(nlcd_url).read()
 {% endhighlight %}
+
+Next we'll take our bytes object and open it as a [rasterio MemoryFile](https://rasterio.readthedocs.io/en/stable/topics/memory-files.html). We can [do this smoothly](https://gis.stackexchange.com/a/363923), but since we're using a GetMap request rather than GetFeatureInfo requests the MemoryFile won't immediately provide us with cells' class codes. To get these we use a hard-coded dictionary written using [the layer's legend](https://www.mrlc.gov/geoserver/mrlc_display/ows?service=WMS&request=GetLegendGraphic&format=image%2Fpng&width=20&height=20&layer=NLCD_2016_Land_Cover_L48).
+Afterwards, we convert the majority of Level II class codes to Level I class codes, mostly just to keep patches from being too small. However, to avoid massive, inconvenient developed patches, class codes 21 are 22 are consolidated into one class while 23 and 24 are consolidated into another. Note also that we mask the image using the work unit's geometry.
+
+{% highlight Python %}
+nlcd_dn_dict = {0:np.nan, 1:11, 2:12, 3:21, 4:22, 5:23, 6:24, 7:31, 8:32, 9:41, 10:42, 11:43, 12:51, 13:52, 14:71, 15:72, 16:73, 17:74, 18:81, 19:82, 20:90, 21:95} #0 comes from rasterio.mask.mask()
+with rasterio.Env(), MemoryFile(nlcd_bytes) as memfile:
+    with memfile.open() as nlcd_not_masked:
+        nlcd, nlcd_transform = mask(nlcd_not_masked, workunit_boundary['geometry'])
+        nlcd = nlcd[0] #reshape from (1, row, col) to (row, col)
+        nlcd_profile = nlcd_not_masked.profile
+        nlcd_ndarray_level_2 = np.vectorize(nlcd_dn_dict.get)(nlcd)
+        nlcd_ndarray_level_1 = nlcd_ndarray_level_2 // 10 #2/22/23: use level 1 for non-urban, modify urban a bit
+        nlcd_ndarray = np.where(nlcd_ndarray_level_1 != 2, nlcd_ndarray_level_1, 21 + 2*(nlcd_ndarray_level_2 > 22)) #assign classes 21 & 22 to value 21 and 23 & 24 to 22
+{% endhighlight %}

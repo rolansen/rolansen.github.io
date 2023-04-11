@@ -56,7 +56,7 @@ workunit_boundary = workunit_boundary_not_proj.to_crs(srid)
        width="482"
        height="413"
      />
-     <figcaption>Boundary for work unit "NC_Phase4_Rowan_2017." CRS is EPSG:3857</figcaption>
+     <figcaption>Boundary for work unit "NC_Phase4_Rowan_2017." CRS here and for plots below is EPSG:3857</figcaption>
   </figure>
 </div>\
 

@@ -99,3 +99,14 @@ with rasterio.Env(), MemoryFile(nlcd_bytes) as memfile:
         nlcd_ndarray_level_1 = nlcd_ndarray_level_2 // 10 #2/22/23: use level 1 for non-urban, modify urban a bit
         nlcd_ndarray = np.where(nlcd_ndarray_level_1 != 2, nlcd_ndarray_level_1, 21 + 2*(nlcd_ndarray_level_2 > 22)) #assign classes 21 & 22 to value 21 and 23 & 24 to 22
 {% endhighlight %}
+
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/nlcd_consolidated.png"
+       width="767"
+       height="413"
+     />
+     <figcaption>NLCD 2016 within workunit boundary, consolidated as described above.</figcaption>
+  </figure>
+</div>\

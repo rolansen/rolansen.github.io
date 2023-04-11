@@ -104,8 +104,8 @@ with rasterio.Env(), MemoryFile(nlcd_bytes) as memfile:
   <figure>
       <img
        src="/assets/nlcd_consolidated.png"
-       width="767"
-       height="413"
+       width="557"
+       height="300"
      />
      <figcaption>NLCD 2016 within workunit boundary, consolidated as described above.</figcaption>
   </figure>

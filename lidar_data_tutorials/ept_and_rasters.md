@@ -113,7 +113,52 @@ with rasterio.Env(), MemoryFile(nlcd_bytes) as memfile:
 
 When we start downloading lidar, we could make one request per pixel for the sake of keeping our code simple, but this would be very inefficient--at our desired EPT resolution of 2 (see below) it takes maybe about 5 seconds to get a laspy object for a single 30 by 30 meter pixel. Making one request for the entire point cloud at this resolution also seems impractical unless one has a lot of RAM to work with. 
 
+To work efficiently with the lidar we'll define a grid over the extent of the raster. The code below implements this grid as a list of ept.Bounds objects, which we'll use later when requesting lidar data. Grid cell boundaries are aligned with pixel boundaries. Cells which don't intersect the work unit geometry are discarded.
 
+{% highlight Python %}
+grid_lindim_size = 66 #in pixels 
+grid_cols = img_width // grid_lindim_size + 1
+grid_cols_remainder = img_width % grid_lindim_size
+grid_rows = img_height // grid_lindim_size + 1
+grid_rows_remainder = img_height % grid_lindim_size
+
+grid_row_length = img_bbox[2] - img_bbox[0]
+
+cell_x_length = grid_lindim_size * pixel_lindim_length
+cell_y_length = grid_lindim_size * pixel_lindim_length
+cell_ll = np.array([img_bbox[0], img_bbox[1]])
+cell_lr = cell_ll + [cell_x_length, 0]
+cell_ur = cell_ll + [cell_x_length, cell_y_length]
+cell_ul = cell_ll + [0, cell_y_length]
+cell = np.array([cell_ll, cell_lr, cell_ur, cell_ul])
+
+#define grid as list of ept.Bounds objects which intersect the workunit's boundary
+grid = []
+for row in range(grid_rows):
+    for col in range(grid_cols):
+        #append cell to list if it intersects workunit boundary
+        if workunit_boundary['geometry'].intersects(Polygon(cell)).any():
+            cell_ept_bounds = ept.Bounds(cell[0,0], cell[0,1], -np.inf,
+                                         cell[2,0], cell[2,1], np.inf) #xmin, ymin, zmin, xmax, ymax, zmax
+            grid.append(cell_ept_bounds)
+
+        #shift cell along x-axis
+        if col != grid_cols - 1:
+            cell += [cell_x_length, 0]
+        else:
+            cell += [grid_cols_remainder * pixel_lindim_length, 0] #avoids making EPT requests outside workunit boundaries
+
+    #shift cell back to min x
+    cell -= [grid_row_length, 0]
+
+    #shift cell along y-axis
+    if row != grid_rows - 1:
+        cell += [0, cell_y_length]
+    else:
+        cell += [0, grid_rows_remainder * pixel_lindim_length] #avoids making EPT requests outside workunit boundaries
+{% endhighlight %}
+
+The chosen grid resolution of 66 pixels (1980 meters) is pretty arbitrary. One could increase it if they'd like to speed up DHM creation, or decrease it if they'd rather use fewer machine resources.
 
 <div style="text-align: center">
   <figure>
@@ -125,3 +170,5 @@ When we start downloading lidar, we could make one request per pixel for the sak
      <figcaption>Grid defined over subsetted NLCD dimensions. Cell width & height are 990 meters. Cells are symbolized with the majority value of consolidated NLCD values within them.</figcaption>
   </figure>
 </div>\
+
+-----

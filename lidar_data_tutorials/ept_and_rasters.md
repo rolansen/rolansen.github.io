@@ -110,3 +110,18 @@ with rasterio.Env(), MemoryFile(nlcd_bytes) as memfile:
      <figcaption>NLCD 2016 within workunit boundary, consolidated as described above.</figcaption>
   </figure>
 </div>\
+
+When we start downloading lidar, we could make one request per pixel for the sake of keeping our code simple, but this would be very inefficient--at our desired EPT resolution of 2 (see below) it takes maybe about 5 seconds to get a laspy object for a single 30 by 30 meter pixel. Making one request for the entire point cloud at this resolution also seems impractical unless one has a lot of RAM to work with. 
+
+
+
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/classified_grid.png"
+       width="557"
+       height="300"
+     />
+     <figcaption>Grid defined over subsetted NLCD dimensions. Cell width & height are 990 meters. Cells are symbolized with the majority value of consolidated NLCD values within them.</figcaption>
+  </figure>
+</div>\

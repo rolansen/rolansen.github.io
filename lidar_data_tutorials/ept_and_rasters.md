@@ -2,13 +2,13 @@
 
 -----
 
-Today most GIS software makes creating digital elevation/surface models (DEM's/DSM's) from lidar data relatively easy. While that's actually more or less what we're going to do here, doing this with Python gives us some obvious advantages, perhaps the most important being flexibility. 
+Today desktop GIS software generally makes it easy to create digital elevation/surface models (DEM’s/DSM’s) from lidar data. While that’s actually more or less what we’re going to do here, doing this with Python gives us some obvious advantages, perhaps the most important being flexibility.
 
-Additionally, EPT support in most GIS software, with the notable exception of [QGIS](https://docs.qgis.org/testing/en/docs/user_manual/working_with_point_clouds/point_clouds.html), is for now nonexistent. Fortunately, the developers of the format have written a small Python library, [ept-python](https://github.com/hobu/ept-python), which allows us to conveniently create [laspy](https://laspy.readthedocs.io/en/latest/index.html) objects from queried EPT data. With the massive amount of [EPT data USGS is hosting](https://usgs.entwine.io/), there's a lot for us to take advantage of here.
+Also, the existence of a [small library written by the developers of the EPT format](https://github.com/hobu/ept-python) for easily querying EPT services and returning [laspy](https://laspy.readthedocs.io/en/latest/index.html) objects, as well as the current lack of EPT support in most desktop GIS software (with the notable exception of [QGIS](https://docs.qgis.org/testing/en/docs/user_manual/working_with_point_clouds/point_clouds.html)) makes Python an ideal way to take advantage of the massive amount of [EPT data USGS is hosting](https://usgs.entwine.io/).
 
-In addition to ept-python, the user will need to install rasterio, geopandas (optionally pyogrio), shapely, [nest_asyncio,](https://pypi.org/project/nest-asyncio/) and some of the libraries typically included with scientific Python distributions: numpy, scipy, and matplotlib. We'll also be working with asyncio, so the user will need a recent version of Python. 
+In addition to the ept-python library mentioned above, to run the code shown in this post you'll need rasterio, geopandas (optionally pyogrio), shapely, nest_asyncio, and some of the libraries typically included with scientific Python distributions: numpy, scipy, and matplotlib. We'll also be using asyncio syntax that will only work for Python >= 3.7.
 
-For convenience, ere's the full list of imports:
+For convenience, here’s the full list of imports:
 
 {% highlight Python %}
 import rasterio
@@ -34,14 +34,14 @@ import os
 
 -----
 
-Our primary goal will be to create a digital height model (DHM) representing height above ground elevation. To prepare for downloading the lidar we'll use to create our DHM, we need to get the following:
+Our primary goal will be to create a digital height model (DHM) representing height above ground elevation. Before downloading the lidar we’ll use to do this, we need to get the following::
 * the boundary of the lidar survey of interest
 * a "template" raster with a known CRS, spatial resolution, and extent that we'll sample the DHM to
 * a grid that we'll use to make requests to the EPT resource
 
-We'll need to start by extracting the survey boundary. USGS's [WESM layer](https://www.usgs.gov/ngp-standards-and-specifications/wesm-data-dictionary) is a source of spatial metadata for the lidar datasets it distributes, many of which are [provided in EPT format](https://usgs.entwine.io). We'll be working with the [work unit](https://www.usgs.gov/ngp-standards-and-specifications/wesm-data-dictionary-general-attributes#workunit) "NC_Phase4_Rowan_2017." I picked this one because it's relatively small and includes a diverse mix of cultivated, impervious, and forested land cover (see the second plot below).
+We'll start by extracting the survey boundary from USGS's [WESM layer](https://www.usgs.gov/ngp-standards-and-specifications/wesm-data-dictionary), a source of spatial metadata for the lidar datasets it distributes. Many of these are [available in EPT format](https://usgs.entwine.io). We'll be working with the [work unit](https://www.usgs.gov/ngp-standards-and-specifications/wesm-data-dictionary-general-attributes#workunit) "NC_Phase4_Rowan_2017." I picked this one because it's relatively small and includes a diverse mix of cultivated, impervious, and forested land cover (see the second plot below).
 
-The code below [pyogrio](https://pyogrio.readthedocs.io/en/latest/) to read the boundary to a single-row geopandas GeoDataFrame. This is fast and doesn't require us to write much code, but if you'd prefer you could do this [directly with geopandas if you have a recent version of Fiona](https://geopandas.org/en/stable/docs/user_guide/io.html#sql-where-filter), read the whole WESM layer and then subset it, or since we'll only be working with the work unit's geometry from here out read the row of interest with Fiona and convert the geometry to a Shapely polygon using shapely.wkb.loads().
+Below we use pyogrio to read the boundary to a single-rowed geopandas GeoDataFrame. This is fast and doesn't require us to write much code, but if you'd prefer you could do this [directly with geopandas if you have a recent version of Fiona](https://geopandas.org/en/stable/docs/user_guide/io.html#sql-where-filter), read the whole WESM layer and then subset it, or since we'll only be working with the work unit's geometry from here on out read the row of interest with Fiona and convert the geometry to a Shapely polygon with shapely.wkb.loads().
 
 {% highlight Python %}
 srid = 3857 #EPT service uses EPSG:3857, and we'll project workunit boundary to and download NLCD with this CRS
@@ -60,7 +60,7 @@ workunit_boundary = workunit_boundary_not_proj.to_crs(srid)
   </figure>
 </div>\
 
-Now we'll use this boundary to define our raster of interest. We'll be using rasterio to read and write our raster data, allowing us to take advantage of the always-helpful numpy and scipy packages for	our image processing tasks. 
+Now we'll use this boundary to define the template raster. We'll be using rasterio to read and write our raster data, allowing us to leverage numpy and scipy for most of our computations.
 
 We could just manually define our raster's extent, CRS, and spatial resolution. However, it often it makes sense to sample a DHM to another raster of interest so they can be compared. Let's work with [National Land Cover Database (NLCD) data](https://www.mrlc.gov/), so later we can look a bit into any relationships between height and land cover (LC). We'll go with NLCD data from 2016, since it's close to the vintage of the lidar work unit. If you like you could [download the ERDAS .img file from the Multi-Resolution Land Characteristics Consortium](https://www.mrlc.gov/data/nlcd-2016-land-cover-conus), which will take up about 30 GB after being unzipped. I'll make a request from [their WMS site](https://www.mrlc.gov/geoserver/mrlc_display/wms?service=WMS&request=GetCapabilities), though, so we can get into a quick tangent about reading WMS data to rasterio.
 

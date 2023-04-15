@@ -171,3 +171,5 @@ The chosen grid resolution of 66 pixels (1980 meters) is pretty arbitrary. One c
 </div>\
 
 -----
+
+...

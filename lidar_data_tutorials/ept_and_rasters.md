@@ -172,4 +172,49 @@ The chosen grid resolution of 66 pixels (1980 meters) is pretty arbitrary. One c
 
 -----
 
-...
+Now we're almost ready to work with the lidar data. All that's left to do is set a couple of parameters and do a few other small, miscellaneous things.
+
+The first will involve asyncio. As explained below, lidar data will be requested and processed asynchronously. 
+Since ept_python will be internally running its own event loop, making our own would throw an error. 
+The [nest_asyncio library](https://pypi.org/project/nest-asyncio/) conveniently allows us to make our own event loop which we'll use to 
+run coroutines which in turn call coroutines from ept_python--all we need to do is import the library and run *nest_asyncio.apply()*.
+We also make a [semaphore](https://docs.python.org/3/library/asyncio-sync.html#asyncio.Semaphore), since if we don't we'll run out of stack space while making requests. 
+I use a value of 15, but similar to the granularity of the grid this is somewhat arbitrary and can likely be adjusted for your hardware.
+
+{% highlight Python %}
+nest_asyncio.apply() #so ept event loop doesn't interfere with our own
+sem_value = 15 #arbitrary, could be adjusted to account for machine's capabilities
+sem = asyncio.Semaphore(sem_value) 
+{% endhighlight %}
+
+We also need to tell ept_python where to make requests and at what resolution. Below *ept_site* points to the URL of the lidar survey's corresponding EPT dataset. 
+This is done because, unfortunately, WESM doesn't have an attribute for EPT URL's, but it's probably possible to construct them from other attributes.
+As discussed [here](https://pdal.io/en/2.4.3/stages/readers.ept.html), the resolution value for an EPT request roughly specifies a cutoff for octree leaf sizes, with at most one lidar return given per leaf. 
+Once again, the chosen value here is a bit subjective.
+
+{% highlight Python %}
+ept_site = 'https://s3-us-west-2.amazonaws.com/usgs-lidar-public/USGS_LPC_NC_Phase4_Rowan_2017_LAS_2019' #unfortunately is not given in WESM
+ept_resolution = 2 #compromise between speed, accuracy, and reliably having enough ground returns in NLCD pixels to calculate ground elevation
+{% endhighlight %}
+
+One of the key steps for assigning values to our raster data will be converting coordinates for the projection (EPSG:3857) to image coordinates. 
+When we made the NLCD raster we also got an affine transformation matrix, for converting image coordinates to projection coordinates, as an Affine object. 
+We could use this and *rasterio.transform.rowcol()* to get the image coordinates corresponding to our lidar returns' (x, y) coordinates, but in practice that's slow.
+A faster option is to use the ~ operator to invert the affine transformation matrix, then represent the matrix with an ndarray.
+That way we can just multiply an ndarray containing points' (x, y) coordinates by this transformation matrix, as will be shown below. 
+
+{% highlight Python %}
+inv_transform = ~nlcd_transform
+affine_mat = np.transpose([[inv_transform.a, inv_transform.b, inv_transform.c],
+                           [inv_transform.d, inv_transform.e, inv_transform.f],
+                           [0, 0, 1]]) #transposing so results of transform have shape (number of returns, 3), or (number of returns, 2) after removing column of 1's
+{% endhighlight %}
+
+Finally, let's initialize the ndarray representing our elevation data. To make the DHM, we'll create a DEM from lidar ground returns and a DSM from first returns, then subtract the former from the latter.
+As mentioned, the elevation rasters will be sampled to the resolution, etc. of the NLCD raster. Each pixel value will represent lidar returns' average z coordinate values.
+For no reason in particular, I'll keep the DSM and DEM in the same ndarray.
+
+{% highlight Python %}
+dsm_and_dem = np.full(shape = (img_height, img_width, 2), fill_value = np.nan, dtype=np.float32) #DSM at [:,:,0] and DEM at [:,:,1]
+{% endhighlight %}
+

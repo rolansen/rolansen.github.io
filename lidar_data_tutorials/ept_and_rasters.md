@@ -174,7 +174,7 @@ The chosen grid resolution of 66 pixels (1980 meters) is pretty arbitrary. One c
 
 Now we're almost ready to work with the lidar data. All that's left to do is set a couple of parameters and a few other small, miscellaneous things.
 
-The first will involve asyncio. As explained below, lidar data will be requested and processed asynchronously. 
+The first will involve asyncio. As shown below, lidar data will be requested and processed asynchronously. 
 Since ept_python will be internally running its own event loop, making our own would throw an error. 
 The [nest_asyncio library](https://pypi.org/project/nest-asyncio/) conveniently allows us to make our own event loop, which we'll use to 
 run coroutines which in turn call coroutines from ept_python--all we need to do is import the library and run *nest_asyncio.apply()*.

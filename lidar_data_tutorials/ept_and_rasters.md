@@ -176,7 +176,7 @@ Now we're almost ready to work with the lidar data. All that's left to do is set
 
 The first will involve asyncio. As explained below, lidar data will be requested and processed asynchronously. 
 Since ept_python will be internally running its own event loop, making our own would throw an error. 
-The [nest_asyncio library](https://pypi.org/project/nest-asyncio/) conveniently allows us to make our own event loop which we'll use to 
+The [nest_asyncio library](https://pypi.org/project/nest-asyncio/) conveniently allows us to make our own event loop, which we'll use to 
 run coroutines which in turn call coroutines from ept_python--all we need to do is import the library and run *nest_asyncio.apply()*.
 We also make a [semaphore](https://docs.python.org/3/library/asyncio-sync.html#asyncio.Semaphore), since if we don't we'll run out of stack space while making requests. 
 I use a value of 15, but similar to the granularity of the grid this is somewhat arbitrary and can likely be adjusted for your hardware.

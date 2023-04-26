@@ -172,7 +172,7 @@ The chosen grid resolution of 66 pixels (1980 meters) is pretty arbitrary. One c
 
 -----
 
-Now we're almost ready to work with the lidar data. All that's left to do is set a couple of parameters and do a few other small, miscellaneous things.
+Now we're almost ready to work with the lidar data. All that's left to do is set a couple of parameters and a few other small, miscellaneous things.
 
 The first will involve asyncio. As explained below, lidar data will be requested and processed asynchronously. 
 Since ept_python will be internally running its own event loop, making our own would throw an error. 

@@ -177,7 +177,7 @@ Now we're almost ready to work with the lidar data. All that's left to do is set
 The first will involve asyncio. As shown below, lidar data will be requested and processed asynchronously. 
 Since ept_python will be internally running its own event loop, making our own would throw an error. 
 The [nest_asyncio library](https://pypi.org/project/nest-asyncio/) conveniently allows us to make our own event loop, which we'll use to 
-run coroutines which in turn call coroutines from ept_python--all we need to do is import the library and run *nest_asyncio.apply()*.
+run coroutines that in turn call coroutines from ept_python--all we need to do is import the library and run *nest_asyncio.apply()*.
 We also make a [semaphore](https://docs.python.org/3/library/asyncio-sync.html#asyncio.Semaphore), since if we don't we'll run out of stack space while making requests. 
 I use a value of 15, but similar to the granularity of the grid this is somewhat arbitrary and can likely be adjusted for your hardware.
 
@@ -188,7 +188,7 @@ sem = asyncio.Semaphore(sem_value)
 {% endhighlight %}
 
 We also need to tell ept_python where to make requests and at what resolution. Below *ept_site* points to the URL of the lidar survey's corresponding EPT dataset. 
-This is done because, unfortunately, WESM doesn't have an attribute for EPT URL's, but it's probably possible to construct them from other attributes.
+This is done because, unfortunately, WESM doesn't have an attribute for EPT URL's, although it's probably possible to construct them from other attributes.
 As discussed [here](https://pdal.io/en/2.4.3/stages/readers.ept.html), the resolution value for an EPT request roughly specifies a cutoff for octree leaf sizes, with at most one lidar return given per leaf. 
 Once again, the chosen value here is a bit subjective.
 
@@ -218,3 +218,24 @@ For no reason in particular, I'll keep the DSM and DEM in the same ndarray.
 dsm_and_dem = np.full(shape = (img_height, img_width, 2), fill_value = np.nan, dtype=np.float32) #DSM at [:,:,0] and DEM at [:,:,1]
 {% endhighlight %}
 
+The time it takes for each tile to have its DEM/DSM values filled in is largely limited
+by how long it takes to download requested lidar data.
+To compensate, we'll use a set of coroutines to do this work.
+The main coroutine, shown below, awaits two others.
+It may seem odd to do this instead of just awaiting one coroutine, but I've found that in practice this is faster.
+
+{% highlight Python %}
+async def set_elev_values_main(grid):
+    epts = await asyncio.gather(*(make_ept_query(req_bounds) for req_bounds in grid)) #can cause stack overflow if semaphore value too great
+    await asyncio.gather(*(download_lidar_and_assign(ept_query) for ept_query in epts))
+{% endhighlight %}
+
+The first coroutine ran by *set_elev_values_main()*, *make_ept_query()*, will make an EPT request for the given EPT dataset URL, resolution, and tile bounds.  
+
+{% highlight Python %}
+async def make_ept_query(req_bounds):
+    async with sem:
+        return ept.EPT(ept_site, bounds=req_bounds, queryResolution=ept_resolution)
+{% endhighlight %}
+
+The next one is more involved...

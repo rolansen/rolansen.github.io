@@ -285,7 +285,7 @@ async def assign_lidar_z_means_within_pixels(lidar_rowcols, las, las_idx, image_
     #sort returns by 1-dimensional image pixel coordinates. need to do this to reduce since np.unique() sorts values
     rowcol_ids_argsort = rowcol_ids.argsort()
     rowcol_ids = rowcol_ids[rowcol_ids_argsort]
-    las_z_of_interest = las[las_idx, 2][rowcol_ids_argsort]
+    las_z_of_interest = las.z[las_idx][rowcol_ids_argsort]
     
     #identify unique 1D and 2D image pixel coordinates, as well as variables we'll use to find mean
     unique_rowcol_ids, unique_rowcol_ids_idx, counts_in_pixels = np.unique(rowcol_ids, return_index=True, return_counts=True)

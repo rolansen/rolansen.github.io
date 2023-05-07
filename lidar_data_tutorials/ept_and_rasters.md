@@ -227,7 +227,7 @@ It may seem odd to do this instead of just awaiting one coroutine, but I've foun
 {% highlight Python %}
 async def set_elev_values_main(grid):
     epts = await asyncio.gather(*(make_ept_query(req_bounds) for req_bounds in grid)) #can cause stack overflow if semaphore value too great
-    await asyncio.gather(*(download_lidar_and_assign(ept_query) for ept_query in epts))
+    await asyncio.gather(*(download_las_and_assign_elev_values(ept_query) for ept_query in epts))
 {% endhighlight %}
 
 The first coroutine ran by *set_elev_values_main()*, *make_ept_query()*, will make an EPT request for the given EPT dataset URL, resolution, and tile bounds.  

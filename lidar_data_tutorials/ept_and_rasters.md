@@ -238,4 +238,60 @@ async def make_ept_query(req_bounds):
         return ept.EPT(ept_site, bounds=req_bounds, queryResolution=ept_resolution)
 {% endhighlight %}
 
-The next one is more involved...
+Next, the requested point cloud data is downloaded and used to set elevation raster values.
+
+{% highlight Python %}
+async def download_las_and_assign_elev_values(grid):
+    las = await download_las(eqt_query)
+    await find_heights_for_tile(las)
+{% endhighlight %}
+
+*download_las()* simply runs a function from ept_python, ept.EPT.as_laspy(), to create a laspy object using the request.
+
+{% highlight Python %}
+async def download_las(ept_query):
+    async with sem:
+        return ept_query.as_laspy()
+{% endhighlight %}
+
+*find_heights_for_tile()* finds image coordinates for each lidar return by using the transformation matrix made prior to running *set_elev_values_main()*. It then makes Boolean indexes for the first returns and ground returns in the tile, and runs a final coroutine for each index.
+
+{% highlight Python %}
+async def find_heights_for_tile(las):
+    #return if las has no records (in case of imprecision with workunit boundary, etc)
+    if las is None or len(las) == 0: 
+        return
+    
+    #find image coordinates
+    lidar_rowcols = np.floor(np.column_stack((las.x, las.y, np.ones(len(las.z)))) @ affine_mat).astype(np.int32)[:,(1,0)] #for convenience coordinates are set in order (image row, image column)
+    
+    #find indexes for first returns and ground returns
+    first_returns_idx = las.return_number == 1
+    ground_returns_idx = las.classification == 2
+    
+    #set raster cell values
+    await assign_lidar_z_means_within_pixels(lidar_rowcols, las, first_returns_idx, 0)
+    await assign_lidar_z_means_within_pixels(lidar_rowcols, las, ground_returns_idx, 1)
+{% endhighlight %}
+
+*find_heights_for_tile()* is more intricate than the others...
+
+{% highlight Python %}
+async def assign_lidar_z_means_within_pixels(lidar_rowcols, las, las_idx, image_idx):
+    #convert image coordinates to 1-dimensional representation, so we can sort lidar
+    lidar_rowcols_at_idx = lidar_rowcols[las_idx]
+    rowcol_ids = lidar_rowcols_at_idx[:,1] + lidar_rowcols_at_idx[:,0] * img_width
+    
+    #sort returns by 1-dimensional image pixel coordinates. need to do this to reduce since np.unique() sorts values
+    rowcol_ids_argsort = rowcol_ids.argsort()
+    rowcol_ids = rowcol_ids[rowcol_ids_argsort]
+    las_z_of_interest = las[las_idx, 2][rowcol_ids_argsort]
+    
+    #identify unique 1D and 2D image pixel coordinates, as well as variables we'll use to find mean
+    unique_rowcol_ids, unique_rowcol_ids_idx, counts_in_pixels = np.unique(rowcol_ids, return_index=True, return_counts=True)
+    unique_rowcols = np.unique(lidar_rowcols_at_idx, axis=0)
+    
+    #use reducer to efficiently find mean z and assign to appropriate pixels in dsm/dem
+    elev_means = np.add.reduceat(las_z_of_interest, unique_rowcol_ids_idx) / counts_in_pixels
+    dsm_and_dem[unique_rowcols[:,0], unique_rowcols[:,1], image_idx] = elev_means
+{% endhighlight %}

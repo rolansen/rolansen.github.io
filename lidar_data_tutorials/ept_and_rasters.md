@@ -246,7 +246,7 @@ async def download_las_and_assign_elev_values(grid):
     await find_heights_for_tile(las)
 {% endhighlight %}
 
-*download_las()* simply runs a function from ept_python, ept.EPT.as_laspy(), to create a laspy object using the request.
+*download_las()* simply runs a function from ept_python, *ept.EPT.as_laspy()*, to create a laspy object using the request.
 
 {% highlight Python %}
 async def download_las(ept_query):
@@ -274,7 +274,7 @@ async def find_heights_for_tile(las):
     await assign_lidar_z_means_within_pixels(lidar_rowcols, las, ground_returns_idx, 1)
 {% endhighlight %}
 
-*find_heights_for_tile()* is more intricate than the others...
+*find_heights_for_tile()* is more intricate than the others. z-coordinates for the lidar data are sorted by image coordinates, the unique image coordinates are identified, a [local reduce operation](https://numpy.org/doc/stable/reference/generated/numpy.ufunc.reduceat.html) is used to find the mean z values corresponding to each image coordinate. In order to efficiently find mean z coordinates for each of the identified image coordinates, and these means are set as values for the appropriate cells of one of the elevation rasters.
 
 {% highlight Python %}
 async def assign_lidar_z_means_within_pixels(lidar_rowcols, las, las_idx, image_idx):
@@ -295,3 +295,7 @@ async def assign_lidar_z_means_within_pixels(lidar_rowcols, las, las_idx, image_
     elev_means = np.add.reduceat(las_z_of_interest, unique_rowcol_ids_idx) / counts_in_pixels
     dsm_and_dem[unique_rowcols[:,0], unique_rowcols[:,1], image_idx] = elev_means
 {% endhighlight %}
+
+With the grid cell size and semaphore value I use (raster resolution doesn't matter as much), it takes me a little less than 3 hours to fill in the DSM. If tiles are not processed asynchronously, it takes maybe about a day. The large majority of this time is spent running *download_las()*, i.e. *ept.EPT.as_laspy()*. 
+
+...

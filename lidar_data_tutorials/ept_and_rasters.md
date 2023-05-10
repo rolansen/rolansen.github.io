@@ -320,4 +320,17 @@ dsm_and_dem[dsm_filled_dem_not_rowcols[:,0], dsm_filled_dem_not_rowcols[:,1], 1]
                                                                                             dsm_filled_dem_not_rowcols, method='cubic')
 {% endhighlight %} 
 
+Now we can create the DHM.  
+
+{% highlight Python%}
+#make DHM. np.maximum() is used to keep values from being < 0
+heights = np.maximum(dsm_and_dem[:,:,0] - dsm_and_dem[:,:,1], 0) 
+{% endhighlight %}
+
+We'll also mask out pixels placed over bodies of water, according to NLCD 2016.
+
+{% highlight Python%}
+heights[nlcd_ndarray==1] = np.nan
+{% endhighlight %}
+
 ...

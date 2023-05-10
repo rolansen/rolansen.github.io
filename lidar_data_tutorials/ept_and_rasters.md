@@ -296,6 +296,28 @@ async def assign_lidar_z_means_within_pixels(lidar_rowcols, las, las_idx, image_
     dsm_and_dem[unique_rowcols[:,0], unique_rowcols[:,1], image_idx] = elev_means
 {% endhighlight %}
 
-With the grid cell size and semaphore value I use (raster resolution doesn't matter as much), it takes me a little less than 3 hours to fill in the DSM and DEM. If tiles are not processed asynchronously, it takes maybe about a day. The large majority of this time is spent running *download_las()*, i.e. *ept.EPT.as_laspy()*. 
+With the grid tile size and semaphore value I use (raster resolution doesn't matter as much), it takes me a little less than 3 hours to fill in the DEM & DSM. If tiles are not processed asynchronously, it takes maybe about a day. The large majority of this time is spent running *download_las()*, i.e. *ept.EPT.as_laspy()*. 
+
+DSM cells should be approximately fully filled in within the workunit's boundaries (excepting pixels located over water bodies, see below), but DEM cells may not be filled in where no ground returns were downloaded. One way to partially resolve this issue to increase the requested EPT resolution, but this won't work for every case--for example, some pixels are completely contained by large rooftops. A more complete solution is to interpolate the DEM so missing values are filled in. Below, we use *scipy.interpolate.griddata()* to apply [cubic interpolation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CloughTocher2DInterpolator.html#scipy.interpolate.CloughTocher2DInterpolator) for the empty cells.  
+
+{% highlight Python %}
+#identify non-empty cells from both the DEM & DSM
+dsm_not_nodata_idx = ~np.isnan(dsm_and_dem[:,:,0])
+dem_not_nodata_idx = ~np.isnan(dsm_and_dem[:,:,1])
+
+#identify cells with non-missing values for both the DEM and DSM
+dsm_and_dem_filled_idx = dsm_not_nodata_idx & dem_not_nodata_idx
+dsm_and_dem_filled_rowcols = np.column_stack(dsm_and_dem_filled_idx.nonzero())
+
+#identify cells with non-missing values for the DSM but missing values for the DEM
+dsm_filled_dem_not_idx = dsm_not_nodata_idx & ~dem_not_nodata_idx
+dsm_filled_dem_not_rowcols = np.column_stack(dsm_filled_dem_not_idx.nonzero())
+
+#interpolate DEM
+dsm_and_dem[dsm_filled_dem_not_rowcols[:,0], dsm_filled_dem_not_rowcols[:,1], 1] = griddata(dsm_and_dem_filled_rowcols, 
+                                                                                            dsm_and_dem[dsm_and_dem_filled_rowcols[:,0],
+                                                                                                        dsm_and_dem_filled_rowcols[:,1]],
+                                                                                            dsm_filled_dem_not_rowcols, method='cubic')
+{% endhighlight %} 
 
 ...

@@ -296,6 +296,6 @@ async def assign_lidar_z_means_within_pixels(lidar_rowcols, las, las_idx, image_
     dsm_and_dem[unique_rowcols[:,0], unique_rowcols[:,1], image_idx] = elev_means
 {% endhighlight %}
 
-With the grid cell size and semaphore value I use (raster resolution doesn't matter as much), it takes me a little less than 3 hours to fill in the DSM. If tiles are not processed asynchronously, it takes maybe about a day. The large majority of this time is spent running *download_las()*, i.e. *ept.EPT.as_laspy()*. 
+With the grid cell size and semaphore value I use (raster resolution doesn't matter as much), it takes me a little less than 3 hours to fill in the DSM and DEM. If tiles are not processed asynchronously, it takes maybe about a day. The large majority of this time is spent running *download_las()*, i.e. *ept.EPT.as_laspy()*. 
 
 ...

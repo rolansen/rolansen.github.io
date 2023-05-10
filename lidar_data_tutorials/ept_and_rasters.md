@@ -327,7 +327,7 @@ Now we can create the DHM.
 heights = np.maximum(dsm_and_dem[:,:,0] - dsm_and_dem[:,:,1], 0) 
 {% endhighlight %}
 
-We'll also mask out pixels placed over bodies of water, according to NLCD 2016.
+We'll also mask out pixels placed over bodies of water, according to NLCD 2016, since these can be misleading where values are greater than 0 (another option would have been to just set all water values to 0)
 
 {% highlight Python%}
 heights[nlcd_ndarray==1] = np.nan

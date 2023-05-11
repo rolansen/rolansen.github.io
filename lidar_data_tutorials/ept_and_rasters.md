@@ -344,4 +344,10 @@ heights[nlcd_ndarray==1] = np.nan
   </figure>
 </div>\
 
+In the near future I'll create a script which given a raster (ndarray and rasterio profile), a specified EPT dataset, and a set of desired pixel-level statistics to calculate from the EPT dataset returns a set of corresponding rasters, similar to what we've done here so far.
+
+What's written below won't go over that sort of thing. Instead, it'll cover patch identification from the NLCD dataset, a technique for finding DHM pixels' surface areas and volumes, and how these measures of elevation seem to be related to land cover class.
+
+-----
+
 ...

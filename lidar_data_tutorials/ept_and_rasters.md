@@ -333,4 +333,15 @@ We'll also mask out pixels placed over bodies of water, according to NLCD 2016, 
 heights[nlcd_ndarray==1] = np.nan
 {% endhighlight %}
 
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/DHM.png"
+       width="482"
+       height="413"
+     />
+     <figcaption>Boundary for work unit "NC_Phase4_Rowan_2017." CRS here and for plots below is EPSG:3857</figcaption>
+  </figure>
+</div>\
+
 ...

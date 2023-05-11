@@ -340,7 +340,7 @@ heights[nlcd_ndarray==1] = np.nan
        width="482"
        height="413"
      />
-     <figcaption>Boundary for work unit "NC_Phase4_Rowan_2017." CRS here and for plots below is EPSG:3857</figcaption>
+     <figcaption>DHM. Values represent meters above the ground surface. </figcaption>
   </figure>
 </div>\
 

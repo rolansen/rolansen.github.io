@@ -346,8 +346,25 @@ heights[nlcd_ndarray==1] = np.nan
 
 In the near future I'll create a script which given a raster (ndarray and rasterio profile), a specified EPT dataset, and a set of desired pixel-level statistics to calculate from the EPT dataset returns a set of corresponding rasters, similar to what we've done here so far.
 
-What's written below won't go over that sort of thing. Instead, it'll cover patch identification from the NLCD dataset, a technique for finding DHM pixels' surface areas and volumes, calculating the topographic roughness index, aggregating these measures of topography to the patch level, and how these measures seem to be related to LC class. The amount of code listed will be more limited than above, since this post is already on the lengthy side.
+What's written below won't go over that sort of thing. Instead, it'll cover patch identification from the NLCD dataset, a technique for finding DHM pixels' surface areas and volumes, calculating the topographic roughness index, aggregating these measures of topography to the patch level, and how these measures seem to be related to LC class. The amount of code listed will be more limited than it is above, since this post is already on the lengthy side.
 
 -----
+
+Generally, patch identification is done using [connected component labeling algorithms](https://en.wikipedia.org/wiki/Connected-component_labeling). For example, [landscapemetrics](https://r-spatialecology.github.io/landscapemetrics/reference/get_patches.html) does this with a connected-component labeling algorithm that's also used in [watershed segmentation](https://people.cmm.minesparis.psl.eu/users/beucher/wtshed.html). 
+
+[*scipy.ndimage.label()* implements one of these algorithms](https://scipy-user.scipy.narkive.com/V8Naooer/scipy-ndimage-measurements-label), and we'll take advantage of it here. The function will consider all non-zero values to be equivalent, so we'll have to apply it once per LC class. After initializing a patch ID raster, for each class we make a binary raster where True values correspond to the current class, get a patch ID raster for this class from *scipy.ndimage.label()*, then update the more general patch ID raster by adding the class-specific one to it. Note also that with each loop patch ID's are incremented with the current maximum value.
+
+{% highlight Python%}
+#label patches
+max_patch_id = 0
+patch_ids = np.zeros(shape=(img_height, img_width))
+for lc_type in np.unique(nlcd_ndarray):
+    if not np.isnan(lc_type):
+        has_lc_type = nlcd_ndarray == lc_type
+        patch_ids_for_lc_type, num_patches = label(has_lc_type)
+        patch_ids += patch_ids_for_lc_type + has_lc_type * max_patch_id
+        max_patch_id == num_patches
+patch_ids[patch_ids == 0]
+{% endhighlight %}
 
 ...

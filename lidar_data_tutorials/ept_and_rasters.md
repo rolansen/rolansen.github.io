@@ -367,4 +367,7 @@ for lc_type in np.unique(nlcd_ndarray):
 patch_ids[patch_ids == 0]
 {% endhighlight %}
 
+f
+
+You might be able to tell by comparing the plot immediately above with the NLCD plot that agricultural and developed patches tend to be much less fragmented than forested ones. If we liked, we could investigate further by comparing the distributions of classes' patch-level SHAPE index values. 
 ...

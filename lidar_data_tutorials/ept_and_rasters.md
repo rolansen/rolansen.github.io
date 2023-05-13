@@ -369,5 +369,5 @@ patch_ids[patch_ids == 0]
 
 f
 
-There are about 50,000 patches in the landscape, given the LC class definitions we set and using a von Neumann neighborhood for each pixel. You might be able to tell by comparing the plot immediately above with the NLCD plot that agricultural and developed patches tend to be much less fragmented than forested ones. If we liked, we could investigate further by comparing the distributions of classes' patch-level SHAPE index values. 
+There are about 50,000 patches in the landscape, given the LC class definitions we set and using 4-neighborhood for each pixel. You might be able to tell by comparing the plot immediately above with the NLCD plot that agricultural and developed patches tend to be much less fragmented than forested ones. If we liked, we could investigate further by comparing the distributions of classes' patch-level SHAPE index values. 
 ...

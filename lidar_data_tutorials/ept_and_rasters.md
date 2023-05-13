@@ -296,7 +296,7 @@ async def assign_lidar_z_means_within_pixels(lidar_rowcols, las, las_idx, image_
     dsm_and_dem[unique_rowcols[:,0], unique_rowcols[:,1], image_idx] = elev_means
 {% endhighlight %}
 
-With the grid tile size and semaphore value I use (raster resolution doesn't matter as much), it takes me a little less than 3 hours to fill in the DEM & DSM. If tiles are not processed asynchronously, it takes maybe about a day. The large majority of this time is spent running *download_las()*, i.e. *ept.EPT.as_laspy()*. 
+With the grid tile size and semaphore value I use (raster resolution doesn't matter as much), it takes me a little less than 3 hours to fill in the DEM & DSM. If tiles are not processed asynchronously, it takes maybe about a day. The large majority of this time is spent running *download_las()*, i.e. *ept.EPT.as_laspy()*. Everything before and after setting DEM/DSM values should take just a few seconds to run.
 
 DSM cells should be approximately fully filled in within the workunit's boundaries (excepting pixels located over water bodies, see below), but DEM cells may not be filled in where no ground returns were downloaded. One way to partially resolve this issue to increase the requested EPT resolution, but this won't work for every case--for example, some pixels are completely contained by large rooftops. A more complete solution is to interpolate the DEM so missing values are filled in. Below, we use *scipy.interpolate.griddata()* to apply [cubic interpolation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CloughTocher2DInterpolator.html#scipy.interpolate.CloughTocher2DInterpolator) for the empty cells.  
 

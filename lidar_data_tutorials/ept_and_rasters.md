@@ -374,7 +374,7 @@ patch_ids[patch_ids == 0]
        width="482"
        height="413"
      />
-     <figcaption>DHM. Values represent meters above the ground surface. </figcaption>
+     <figcaption>Identified patches, each colored randomly. </figcaption>
   </figure>
 </div>\
 

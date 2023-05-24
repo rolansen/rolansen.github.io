@@ -380,4 +380,19 @@ patch_ids[patch_ids == 0]
 
 There are about 50,000 patches in the landscape, given the LC class definitions we set and using 4-neighborhood for each pixel. You might be able to tell by comparing the plot immediately above with the NLCD plot that the largest patches tend to be developed. If we liked, we could investigate further by comparing the distributions of classes' patch-level SHAPE index values. 
 
-...
+-----
+
+It seems predictable that there would be clear relationships between LC type and height statistics--the most obvious being that forested and developed patches probably have greater heights above ground elevation, on average, than others. 
+
+How can we look into this? One clear place to start is to just look at the distributions of incidental DHM values for each LC class. Averages, of course, will suggest which types of LC tend to be shortest and tallest and so on, and if we'd like to measure how heights vary for each class we could just take variance. 
+
+Let's say we'd like to work at the patch level rather than the class level. ...
+
+-----
+**References**
+
+Jenness, J. S. (2004). Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin, 32(3), 829-839.
+
+Kedron, P., Zhao, Y., & Frazier, A. E. (2019). Three dimensional (3D) spatial metrics for objects. Landscape Ecology, 34, 2123-2132.
+
+Riley, S. J., DeGloria, S. D., & Elliot, R. (1999). A terrain ruggedness index that quantifies topographic heterogeneity. intermountain Journal of sciences, 5(1-4), 23-27.

@@ -382,11 +382,15 @@ There are about 50,000 patches in the landscape, given the LC class definitions 
 
 -----
 
-It seems predictable that there would be clear relationships between LC type and height statistics--the most obvious being that forested and developed patches probably have greater heights above ground elevation, on average, than others. 
+It seems predictable that there would be clear relationships between LC type and height statistics--the most obvious relationship being that forested and developed patches probably have greater heights above ground elevation, on average, than others. 
 
-How can we look into this? One clear place to start is to just look at the distributions of incidental DHM values for each LC class. Averages, of course, will suggest which types of LC tend to be shortest and tallest and so on, and if we'd like to measure how heights vary for each class we could just take variance. 
+How can we investigate? One clear place to start is to just look at the distributions of corresponding DHM values for each LC class. Averages, of course, will suggest which types of LC tend to be shortest and tallest and so on, and if we'd like to measure how heights vary for each class we could just take variance. Another option for assessing height variability is the terrain ruggedness index (TRI), which is often used to describe pixel-level heterogeneity of DEM values (Riley et. al., 1999). 
 
-Let's say we'd like to work at the patch level rather than the class level. ...
+The TRI value for a pixel can be expressed as: 
+*TRI* = [*&Sigma;*(*x*-*xi*)^2]^(1/2),
+where *x* is the value of the pixel and *xi* is the value of the pixel's ith neighbor. Of course the TRI wasn't designed for DHM data, but we'll compute it anyway just because I'd like to show how, and it should suit our purposes regardless. It's a pixel-level metric, so it can be aggregated to the patch or class level.  
+
+Speaking of patches, [Let's say we'd like to work at the patch level rather than the class level]. ...
 
 -----
 **References**

@@ -388,9 +388,9 @@ How can we investigate? One clear place to start is to just look at the distribu
 
 The TRI value for a pixel can be expressed as: 
 
-*TRI* = √[*&Sigma;*ᵢ₌₁ⁿ(*x*-*xᵢ*)²],
+*TRI* = √[*&Sigma;*ⁿᵢ₌₁(*x*-*xᵢ*)²],
 
-where *x* is the value of the pixel and *xᵢ* is the value of the pixel's ith neighbor. Of course the TRI wasn't designed for DHM data, but we'll compute it anyway just because I'd like to show how, and it should suit our purposes regardless. It's a pixel-level metric, so it can be aggregated to the patch or class level.  
+where *x* is the value of the pixel, *xᵢ* is the value of the pixel's *i*th neighbor, and *n* is the number of neighbors. Of course the TRI wasn't designed for DHM data, but we'll compute it anyway just because I'd like to show how, and it should suit our purposes regardless. It's a pixel-level metric, so it can be aggregated to the patch or class level.  
 
 Speaking of patches, *let's say we'd like to work at the patch level rather than the class level*...
 

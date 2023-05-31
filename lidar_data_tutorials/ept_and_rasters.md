@@ -397,8 +397,8 @@ Speaking of patches, *let's say we'd like to work at the patch level rather than
 -----
 **References**
 
-Jenness, J. S. (2004). Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin, 32(3), 829-839.
+Jenness, J. S. (2004). Calculating landscape surface area from digital elevation models. *Wildlife Society Bulletin*, *32*(3), 829-839.
 
-Kedron, P., Zhao, Y., & Frazier, A. E. (2019). Three dimensional (3D) spatial metrics for objects. Landscape Ecology, 34, 2123-2132.
+Kedron, P., Zhao, Y., & Frazier, A. E. (2019). Three dimensional (3D) spatial metrics for objects. *Landscape Ecology*, *34*, 2123-2132.
 
-Riley, S. J., DeGloria, S. D., & Elliot, R. (1999). A terrain ruggedness index that quantifies topographic heterogeneity. intermountain Journal of sciences, 5(1-4), 23-27.
+Riley, S. J., DeGloria, S. D., & Elliot, R. (1999). A terrain ruggedness index that quantifies topographic heterogeneity. *Intermountain Journal of sciences*, *5*(1-4), 23-27.

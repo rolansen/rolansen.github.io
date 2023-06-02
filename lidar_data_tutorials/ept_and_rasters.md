@@ -392,7 +392,15 @@ The TRI value for a pixel can be expressed as:
 
 where *x* is the value of the pixel, *xᵢ* is the value of the pixel's *i*th neighbor, and *n* is the number of neighbors. Of course the TRI wasn't designed for DHM data, but we'll compute it anyway just because I'd like to show how, and it should suit our purposes regardless. It's a pixel-level metric, so it can be aggregated to the patch or class level.  
 
-Speaking of patches, *let's say we'd like to work at the patch level rather than the class level*...
+Speaking of patches, let’s say we’d like to compute some patch-level statistics. We can easily find these kinds of statistics for DHM and TRI values using the patch ID raster (I don't go over exactly how to do that here, but you can use np.unique() and a local reducer in a similar way to what's done in *assign_lidar_z_means_within_pixels()*). 
+
+Let's add one more metric to our list. Kedron et al. (2019) introduce a set of metrics describing the 3D characteristics of "objects" (building footprints overlying a DHM, in their case, but patches in ours). Here we'll compute their SHAPE3D metric, which analogously to the familiar 2D SHAPE metric, measures how far the 3D shape of an object deviates from the shape of a cube with the same surface area. I calculate it as:
+
+*SHAPE3D* = SA(*p*) / [5 Vol(*p*)²ᐟ³]
+
+where *p* is a given patch, SA(*p*) is its surface area, and Vol(*p*) is its volume. Volume is multiplied by 5 rather than 6 for reasons discussed below. 
+
+How do we compute surface area and volume? ...
 
 -----
 **References**

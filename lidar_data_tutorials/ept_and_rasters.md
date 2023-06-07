@@ -412,7 +412,16 @@ where *e*₁, *e*₂, and *e*₃ are edge lengths and *s* = (*e*₁ + *e*₂ + *
 
 Volume for individual triangles is found similarly, but by reconceptualizing each triangle as a [truncated right triangular prism](https://en.wikipedia.org/wiki/Triangular_prism#Truncated_triangular_prism), where the top and bottom faces are not parallel with one another but one of them is perpendicular to edges joining the faces. 
 
-pic here
+<div style="text-align: center">
+  <figure>
+      <img
+       src="https://commons.wikimedia.org/wiki/File:TruncatedTriangularPrism.png"
+       width="400"
+       height="453"
+     />
+     <figcaption>Truncated right triangular prism. From Wikipedia.</figcaption>
+  </figure>
+</div>\
 
 [We can calculate the volume of a solid like this as:](https://math.stackexchange.com/a/2734748) 
 

@@ -415,7 +415,7 @@ Volume for individual triangles is found similarly, but by reconceptualizing eac
 <div style="text-align: center">
   <figure>
       <img
-       src="https://commons.wikimedia.org/wiki/File:TruncatedTriangularPrism.png"
+       src="https://upload.wikimedia.org/wikipedia/commons/8/8c/TruncatedTriangularPrism.png"
        width="400"
        height="453"
      />
@@ -429,6 +429,7 @@ volume = *B*(*z*₁ + *z*₂ + *z*₃) / 3,
 
 where *B* is the area of the prism's bottom face and *z*₁, *z*₂, and *z*₃ are the lengths of the edges joining the two faces. Again, to get the total volume of the pixel we just sum up the volumes of the individual prisms.
 
+Let's see how to actually make surface area, volume, and TRI rasters from the DHM...
 (code (EDIT FOR **CORRECTED** VOLUME FORMULA), then pictures...)
 
 -----

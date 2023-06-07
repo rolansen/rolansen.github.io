@@ -396,11 +396,19 @@ Speaking of patches, let’s say we’d like to compute some patch-level statist
 
 Let's add one more metric to our list. Kedron et al. (2019) introduce a set of metrics describing the 3D characteristics of "objects" (building footprints overlying a DHM, in their case, but patches in ours). Here we'll compute their SHAPE3D metric, which analogously to the familiar 2D SHAPE metric, measures how far the 3D shape of an object deviates from the shape of a cube with the same surface area. I calculate it as:
 
-*SHAPE3D* = SA(*p*) / [5 Vol(*p*)²ᐟ³]
+*SHAPE3D* = SA(*p*) / [5 Vol(*p*)²ᐟ³],
 
 where *p* is a given patch, SA(*p*) is its surface area, and Vol(*p*) is its volume. Volume is multiplied by 5 rather than 6 for reasons discussed below. 
 
-How do we compute surface area and volume? ...
+How are surface area and volume computed? Jenness (2004) introduces a simple way to easily derive pixel-level surface area values from a DEM. Consider a set of 8 triangles defined by a pixel's center and the eight neighboring pixel centers, as shown in the image below.
+
+image here
+
+For some raster these triangles are defined over, we can imagine these triangles as lying somewhere in 3D space, with the z-coordinates of the vertices defined by their corresponding pixel values; this may be especially intuitive in the case of a DEM. Surface area is calculated by measuring the three-dimensional lengths of the triangle edges shown in the image above, halving each of the edges relevant to the current pixel of interest (since half of each edge lies in one pixel), finding the area of each triangle within the pixel, and finally summing these areas. Areas for individual triangles are found with Heron's formula:
+
+area = √[*s*(*s* - *a*)(*s* - *b*)(*s* - *c*)],
+
+where *a*, *b*, and *c* are edge lengths and *s* = (a + b + c) / 2 is the semiperimeter.
 
 -----
 **References**

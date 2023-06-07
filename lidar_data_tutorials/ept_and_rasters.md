@@ -406,9 +406,21 @@ image here
 
 For some raster these triangles are defined over, we can imagine these triangles as lying somewhere in 3D space, with the z-coordinates of the vertices defined by their corresponding pixel values; this may be especially intuitive in the case of a DEM. Surface area is calculated by measuring the three-dimensional lengths of the triangle edges shown in the image above, halving each of the edges relevant to the current pixel of interest (since half of each edge lies in one pixel), finding the area of each triangle within the pixel, and finally summing these areas. Areas for individual triangles are found with Heron's formula:
 
-area = √[*s*(*s* - *a*)(*s* - *b*)(*s* - *c*)],
+area = √[*s*(*s* - *e*₁)(*s* - *e*₂)(*s* - *e*₃)],
 
-where *a*, *b*, and *c* are edge lengths and *s* = (a + b + c) / 2 is the semiperimeter.
+where *e*₁, *e*₂, and *e*₃ are edge lengths and *s* = (*e*₁ + *e*₂ + *e*₃) / 2 is the semiperimeter.
+
+Volume for individual triangles is found similarly, but by reconceptualizing each triangle as a [truncated right triangular prism](https://en.wikipedia.org/wiki/Triangular_prism#Truncated_triangular_prism), where the top and bottom faces are not parallel with one another but one of them is perpendicular to edges joining the faces. 
+
+pic here
+
+[We can calculate the volume of a solid like this as:](https://math.stackexchange.com/a/2734748) 
+
+volume = *B*(*z*₁ + *z*₂ + *z*₃) / 3,
+
+where *B* is the area of the prism's bottom face and *z*₁, *z*₂, and *z*₃ are the lengths of the edges joining the two faces. Again, to get the total volume of the pixel we just sum up the volumes of the individual prisms.
+
+(code (EDIT FOR **CORRECTED** VOLUME FORMULA), then pictures...)
 
 -----
 **References**

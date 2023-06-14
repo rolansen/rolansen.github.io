@@ -438,8 +438,44 @@ volume = *B*(*z*₁ + *z*₂ + *z*₃) / 3,
 
 where *B* is the area of the prism's bottom face and *z*₁, *z*₂, and *z*₃ are the lengths of the edges joining the two faces. Again, to get the total volume of the pixel we just sum up the volumes of the individual prisms (for us, the DHM values).
 
-Let's see how to actually make surface area, volume, and TRI rasters from the DHM...
-(code (EDIT FOR **CORRECTED** VOLUME FORMULA), then pictures...)
+The first step for making a TRI raster from the DHM is to calculate the squared differences between DHM cells and each of their respective eight neighbors. Similarly, for surface area and volume we'll want to find half of the 3D distance between DHM cells and their eight neighbors. Below we represent both the squared height differences and the half-distances with ndarray's having the shape (image height, image width, 8), the third axis representing a neighbor/compass direction. For each of the eight compass directions, we use *scipy.ndimage.convolve()*, passing it a kernel corresponding to the current direction. For example, the kernel [[0, 1, 0], [0, 0, 0], [0, 0, 0]] is used for the northern neighbor. 
+
+{%highlight Python%}
+#set values in 3d "half distance" ndarray and "squared difference" ndarray. we'll use the former to calculate pixel-level surface area and volume, the latter to get TRI
+#first two dimensions of array will be same as nlcd & height images, each entry in third dimension will represent one of 8 compass directions
+#values at position [:, :, 0] will represent half distances (or squared difference) between pixel and its northeast neighbor, at [:, :, 1] that between pixel and north neighbor, etc
+num_directions = 8
+half_dist3d_array = np.zeros(shape=(img_height, img_width, num_directions)) #NW, N, NE, W, E, SW, S, SE, in that order
+squared_difference_array = np.zeros(shape=(img_height, img_width, num_directions)) #same compass direction order as half_dist3d_array. this will be used to compute TRI of DHM
+for pos in range(num_directions // 2): #only need to do 4 comparisons. pos is position of 1 in kernel for "current" direction (NW, N, NE, and W, in that order).
+    if pos % 2 == 1:
+        planar_pixel_center_distance = pixel_lindim_length
+    else:
+        planar_pixel_center_distance = np.sqrt(2 * pixel_lindim_length**2)
+    opp_pos = num_directions - pos #opposite from position 0 (NW) is position 8 (SE), from 1 (N) is 7 (S), etc
+    kernel = np.reshape(np.array([1 if _ == pos else 0 for _ in range(num_directions + 1)]), (3,3))
+    opp_kernel = np.reshape(np.array([1 if _ == opp_pos else 0 for _ in range(num_directions + 1)]), (3,3))
+
+    pos_height_differences = heights - convolve(heights, weights = kernel, mode = 'nearest')
+    opp_pos_height_differences = heights - convolve(heights, weights = opp_kernel, mode = 'nearest') #note setting mode='nearest' implies we assume height is constant past borders/corners
+
+    pos_half_3d_distances = np.sqrt(np.power(planar_pixel_center_distance, 2) + np.power(pos_height_differences, 2) / 2 #using half the 3d distances gives us part of triangle that's in pixel boundaries
+    opp_pos_half_3d_distances = np.sqrt(np.power(planar_pixel_center_distance, 2) + np.power(opp_pos_height_differences, 2) / 2 
+
+    half_dist3d_array[:, :, pos] = pos_half_3d_distances
+    half_dist3d_array[:, :, opp_pos - 1] = opp_pos_half_3d_distances
+
+    squared_difference_array[:, :, pos] = np.power(pos_height_differences, 2)
+    squared_difference_array[:, :, opp_pos - 1] = np.power(opp_pos_height_differences, 2)
+{%endhighlight%}
+
+We can now get the TRI raster by simply summing the squared difference ndarray along its third axis, then finding the square root of this sum.
+
+{%highlight Python%}
+roughness_array = np.sqrt(np.sum(squared_difference_array, axis=2))
+{%endhighlight%}
+
+[TRI pic here. TODO: run once more, with corrected formula...]
 
 -----
 **References**

@@ -394,7 +394,7 @@ where *x* is the value of the pixel, *xᵢ* is the value of the pixel's *i*th ne
 
 Speaking of patches, let’s say we’d like to compute some patch-level statistics. We can easily find these kinds of statistics for DHM and TRI values using the patch ID raster (I don't go over exactly how to do that here, but you can use np.unique() and a local reducer in a similar way to what's done in *assign_lidar_z_means_within_pixels()*). 
 
-Let's add one more metric to our list. Kedron et al. (2019) introduce a set of metrics describing the 3D characteristics of "objects" (building footprints overlying a DHM, in their case, but patches in ours). Here we'll compute their SHAPE3D metric, which analogously to the familiar 2D SHAPE metric, measures how far the 3D shape of an object deviates from the shape of a cube with the same surface area. I calculate it as:
+Let's add one more metric to our list. Kedron et al. (2019) introduce a set of metrics describing the 3D characteristics of "objects" (building footprints overlying a DHM in their case, identified patches combined with a DHM in ours). Here we'll compute their SHAPE3D metric, which analogously to the familiar 2D SHAPE metric, measures how far the 3D shape of an object deviates from the shape of a cube with the same surface area. I calculate it as:
 
 *SHAPE3D* = SA(*p*) / [5 Vol(*p*)²ᐟ³],
 
@@ -438,7 +438,7 @@ volume = *B*(*z*₁ + *z*₂ + *z*₃) / 3,
 
 where *B* is the area of the prism's bottom face and *z*₁, *z*₂, and *z*₃ are the lengths of the edges joining the two faces. Again, to get the total volume of the pixel we just sum up the volumes of the individual prisms (for us, the DHM values).
 
-The first step for making a TRI raster from the DHM is to calculate the squared differences between DHM cells and each of their respective eight neighbors. Similarly, for surface area and volume we'll want to find half of the 3D distance between DHM cells and their eight neighbors. Below we represent both the squared height differences and the half-distances with ndarray's having the shape (image height, image width, 8), the third axis representing a neighbor/compass direction. For each of the eight compass directions, we use *scipy.ndimage.convolve()*, passing it a kernel corresponding to the current direction. For example, the kernel [[0, 1, 0], [0, 0, 0], [0, 0, 0]] is used for the northern neighbor. 
+The first step for making a TRI raster from the DHM is to calculate the squared differences between DHM pixel values and each of their respective eight neighbors. Similarly, for surface area and volume we'll want to find half of the 3D distance between DHM pixel values and their eight neighbors. Below we represent both the squared height differences and the half-distances with ndarray's having the shape (image height, image width, 8), the third axis representing a neighbor/compass direction. For each of the eight compass directions, we use *scipy.ndimage.convolve()*, passing it a kernel corresponding to the current direction. For example, the kernel [[0, 1, 0], [0, 0, 0], [0, 0, 0]] is used for the northern neighbor. 
 
 {%highlight Python%}
 #set values in 3d "half distance" ndarray and "squared difference" ndarray. we'll use the former to calculate pixel-level surface area and volume, the latter to get TRI

@@ -475,7 +475,18 @@ We can now get the TRI raster by simply summing the squared difference ndarray a
 roughness_array = np.sqrt(np.sum(squared_difference_array, axis=2))
 {%endhighlight%}
 
-[TRI pic here. TODO: run once more, with corrected formula...]
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/tri_sqrt.png"
+       width="482"
+       height="413"
+     />
+     <figcaption>Square root of DHM-derived TRI raster. Values are greater when height above ground changes more rapidly. </figcaption>
+  </figure>
+</div>\
+
+Finding surface area and volume takes a bit more work. ...
 
 -----
 **References**

@@ -482,7 +482,7 @@ roughness_array = np.sqrt(np.sum(squared_difference_array, axis=2))
        width="482"
        height="413"
      />
-     <figcaption>Square root of DHM-derived TRI raster. Values are greater when height above ground changes more rapidly. </figcaption>
+     <figcaption>Square root of DHM-derived TRI raster. Values are greater where height above ground changes more rapidly. </figcaption>
   </figure>
 </div>\
 

@@ -486,7 +486,37 @@ roughness_array = np.sqrt(np.sum(squared_difference_array, axis=2))
   </figure>
 </div>\
 
-Finding surface area and volume takes a bit more work. ...
+Finding surface area and volume takes a bit more work. To get the 3D distances between each triangle vertex, I'll once again use *scipy.ndimage.convolve()*, this time defining the kernels with a couple of hard-coded dictionaries. We use these distances to calculate the current triangle's semiperimeter, then its surface area. 
+
+[code]
+
+After looping through each triangle, we can just sum the results along the third axis to get the final surface area and volume rasters.
+
+[code]
+
+[surface area and volume images]
+    
+Let's look at patch-level SHAPE3D values and averages of DHM and TRI. I won't show any code for this or SHAPE3D calculations, mostly because what I wrote isn't very concise, but you can use the patch ID raster, *np.unique()* and a local reducer in a similar way to what’s done in *assign_lidar_z_means_within_pixels()*. 
+
+[patch-level shape3D image here]
+
+Below are plots and a table showing the distributions of these patch-level metrics for each class type present within the workunit boundary, after removing values above the metrics' 99.5th percentiles. I also included the distributions of averages weighed by patch size--these distributions are similar to pixel-level ones. It's difficult to get a global view of the patterns from these plots, but you may be able to get a somewhat clear picture by focusing on one class at a time. Here are some of my takeaways:
+* For all classes, SHAPE3D seems to be much more variable than what I assumed after looking at the map of patch-level values. 
+* Forests and wetland patches tend to have the greatest average DHM values. Lightly developed patches tend to have average DHM values between forests/wetlands and the others. More heavily developed patches likely tend to have lower values because of parking lots and roads.
+* TRI means are similar among all classes. This could be due to TRI values often being greatest near patch boundaries, where sudden height changes are more likely, and low elsewhere.
+* The noticeable peaks for lightly developed land's area-weighted average DHM and TRI values may be due to a few relatively large patches around urban centers.
+
+[distribution plot here]
+
+[table here? TODO?: rerun code and copy/paste the spit-out metrics?]
+
+If we wanted to more formally analyze how these distributions differ between classes, we could do ANOVA or a series of t-tests--our data appears, at least, normal enough for these to perform well. It seems that non-independence of the metrics between adjacent samples (patches) could complicate things, though, so we'll stop here.
+
+-----
+
+EPT datasets give us a great opportunity to work with lidar point clouds spread across large regions without having to download several hundred gigabytes to disk. You can do something like what we did here to make DEM's, DSM's, and similar rasters from these datasets in a relatively efficient manner.
+
+One problem we could run into when working with aerial imagery and lidar is that the horizontal error of the two data sets typically won't be identical. This didn't make too big of a difference here given the scale we worked at, but if we're working with a finer grain size there could be problems. For my next post I'd like to show one or two ways to get around this issue by performing lidar point cloud/image registration.
 
 -----
 **References**

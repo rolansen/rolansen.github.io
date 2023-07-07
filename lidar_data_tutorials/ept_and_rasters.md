@@ -488,11 +488,35 @@ roughness_array = np.sqrt(np.sum(squared_difference_array, axis=2))
 
 Finding surface area and volume takes a bit more work. To get the 3D distances between each triangle vertex, I'll once again use *scipy.ndimage.convolve()*, this time defining the kernels with a couple of hard-coded dictionaries. We use these distances to calculate the current triangle's semiperimeter, then its surface area. 
 
-[code]
+{%highlight Python%}
+tri_surfa_array = np.zeros(shape=(img_height, img_width, num_directions)) #surface area of triangles within each pixel
+tri_vol_array = np.zeros(shape=(img_height, img_width, num_directions)) #volume of triangles within each pixel
+vertex_dict = {0: 1, 1: 2, 2: 4, 3: 0, 4: 7, 5: 3, 6: 5, 7: 6} #keys and values are compass directions. see above
+alt_kernel_pos_dict = {0: 4, 1: 4, 2: 6, 3: 1, 4: 6, 5: 1, 6: 3, 7: 3} #describes position of vertex_2 relative to vertex_1 (vertex_3 would be center). again keys & values are compass directions
+for vertex_1 in range(num_directions):
+    vertex_2 = vertex_dict.get(vertex_1)
+    alt_pos = alt_kernel_pos_dict.get(vertex_1) #position of vertex_2 relative to vertex_1. we'll consider the line seg made by vertex_1 & 2 the triangle's altitude
+    vertex_1_kernel_pos = vertex_1 if vertex_1 < 4 else vertex_1 + 1 #defines position of 1 in 3x3 kernel
+    vertex_2_kernel_pos = vertex_2 if vertex_2 < 4 else vertex_2 + 1
+
+    alt_dist_3d_kernel = np.reshape(np.array([1 if _ == vertex_1_kernel_pos else 0 for _ in range(num_directions + 1)]), (3,3))
+    alt_dist_3d = convolve(half_dist3d_array[:, :, alt_pos], weights = alt_dist_3d_kernel, mode = 'nearest')
+
+    semiperimeter = (half_dist3d_array[:, :, vertex_1] + half_dist3d_array[:, :, vertex_2] + alt_dist_3d) / 2
+    tri_surfa_array[:, :, vertex_1] = np.sqrt(semiperimeter * (semiperimeter - half_dist3d_array[:, :, vertex_1]) \
+                                              * (semiperimeter - half_dist3d_array[:, :, vertex_2]) \ 
+                                              * (semiperimeter - alt_dist_3d))
+
+    heights_kernel = np.reshape(np.array([1 if _ in (vertex_1, vertex_2_kernel_pos, 4) else 0 for _ in range(num_directions + 1)]), (3,3))
+    tri_vol_array[:, :, vertex_1] = tri_surfa_array[:, :, vertex_1] * convolve(heights, weights = heights_kernel, mode='nearest') / 3
+{%endhighlight%}
 
 After looping through each triangle, we can just sum the results along the third axis to get the final surface area and volume rasters.
 
-[code]
+{%highlight Python%}
+surfa_array = np.sum(tri_surfa_array, axis=2) #per-pixel surface area
+vol_array = np.sum(tri_vol_array, axis=2) #per-pixel volume
+{%endhighlight%}
 
 [surface area and volume images]
     

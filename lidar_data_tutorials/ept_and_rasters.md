@@ -296,7 +296,7 @@ async def assign_lidar_z_means_within_pixels(lidar_rowcols, las, las_idx, image_
     dsm_and_dem[unique_rowcols[:,0], unique_rowcols[:,1], image_idx] = elev_means
 {% endhighlight %}
 
-With the grid tile size and semaphore value I use (raster resolution doesn't matter as much), it takes me a little less than 3 hours to fill in the DEM & DSM. If tiles are not processed asynchronously, it takes maybe about a day. The large majority of this time is spent running *download_las()*, i.e. *ept.EPT.as_laspy()*. Everything before and after setting DEM/DSM values should take just a few seconds to run.
+With the grid tile size and semaphore value I use (raster resolution doesn't matter as much), it takes me a little less than 2.5 hours to fill in the DEM & DSM. If tiles are not processed asynchronously, it takes maybe about a day. The large majority of this time is spent running *download_las()*, i.e. *ept.EPT.as_laspy()*. Everything before and after setting DEM/DSM values should take just a few seconds to run.
 
 DSM cells should be approximately fully filled in within the workunit's boundaries (excepting pixels located over water bodies, see below), but DEM cells may not be filled in where no ground returns were downloaded. One way to partially resolve this issue to increase the requested EPT resolution, but this won't work for every case--for example, some pixels are completely contained by large rooftops. A more complete solution is to interpolate the DEM so missing values are filled in. Below, we use *scipy.interpolate.griddata()* to apply [cubic interpolation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.CloughTocher2DInterpolator.html#scipy.interpolate.CloughTocher2DInterpolator) for the empty cells.  
 
@@ -392,13 +392,13 @@ The TRI value for a pixel can be expressed as:
 
 where *x* is the value of the pixel, *xᵢ* is the value of the pixel's *i*th neighbor, and *n* is the number of neighbors. Of course the TRI wasn't designed for DHM data, but we'll compute it anyway just because I'd like to show how, and it should suit our purposes regardless. It's a pixel-level metric, so it can be aggregated to the patch or class level.  
 
-Speaking of patches, let’s say we’d like to compute some patch-level statistics. We can easily find these kinds of statistics for DHM and TRI values using the patch ID raster (I don't go over exactly how to do that here, but you can use np.unique() and a local reducer in a similar way to what's done in *assign_lidar_z_means_within_pixels()*). 
+Speaking of patches, let’s say we’d like to compute some patch-level statistics. We can easily find these kinds of statistics for DHM and TRI values using the patch ID raster. 
 
 Let's add one more metric to our list. Kedron et al. (2019) introduce a set of metrics describing the 3D characteristics of "objects" (building footprints overlying a DHM in their case, identified patches combined with a DHM in ours). Here we'll compute their SHAPE3D metric, which analogously to the familiar 2D SHAPE metric, measures how far the 3D shape of an object deviates from the shape of a cube with the same surface area. I calculate it as:
 
 *SHAPE3D* = SA(*p*) / [5 Vol(*p*)²ᐟ³],
 
-where *p* is a given patch, SA(*p*) is its surface area, and Vol(*p*) is its volume. Volume is multiplied by five rather than six for reasons discussed below. 
+where *p* is a given patch, SA(*p*) is its surface area, and Vol(*p*) is its volume. Volume is multiplied by five rather than six because surface area will only be found for the portion of the pixel above the ground surface. 
 
 How are surface area and volume computed? Jenness (2004) introduces a simple way to easily derive pixel-level surface area values from a DEM. Consider a set of eight triangles defined by a pixel's center and the eight neighboring pixel centers, as shown in the image below.
 
@@ -413,7 +413,7 @@ How are surface area and volume computed? Jenness (2004) introduces a simple way
   </figure>
 </div>\
 
-For some raster these triangles are defined over, we can imagine these triangles as lying somewhere in 3D space, with the z-coordinates of the vertices defined by their corresponding pixel values; this may be especially intuitive in the case of a DEM. Surface area is calculated by measuring the three-dimensional lengths of the triangle edges shown in the image above, halving each of the edges relevant to the current pixel of interest (since half of each edge lies in one pixel), finding the area of each triangle within the pixel, and finally summing these areas. Areas for individual triangles are found with Heron's formula:
+We can define these triangles over a whole raster and imagine them as lying somewhere in 3D space, with the z-coordinates of the vertices defined by their corresponding pixel values. This interpretation may be especially intuitive if the raster is a DEM. Surface area is calculated by measuring the three-dimensional lengths of the triangle edges shown in the image above, halving each of the edges relevant to the current pixel of interest (since half of each edge lies in one pixel), finding the area of each triangle within the pixel, and finally summing these areas. Areas for individual triangles are found with Heron's formula:
 
 area = √[*s*(*s* - *e*₁)(*s* - *e*₂)(*s* - *e*₃)],
 

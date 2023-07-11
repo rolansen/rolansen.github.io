@@ -530,7 +530,16 @@ Below are plots and a table showing the distributions of these patch-level metri
 * TRI means are similar among all classes. This could be due to TRI values often being greatest near patch boundaries, where sudden height changes are more likely, and low elsewhere.
 * The noticeable peaks for lightly developed land's area-weighted average DHM and TRI values may be due to a few relatively large patches around urban centers.
 
-[distribution plot here]
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/threeD_patch_metric_plots.PNG"
+       width="750"
+       height="500"
+     />
+     <figcaption>Patch metric distributions.</figcaption>
+  </figure>
+</div>\
 
 |  class | 3 | 4 | 5 | 7 | 8 | 9 | 21 | 23 |
 | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | 
@@ -539,6 +548,7 @@ Below are plots and a table showing the distributions of these patch-level metri
 | SHAPE3D mean | 3.8 | 1.7 | 2.6 | 2.4 | 3.0 | 1.7 | 1.6 | 2.1 |
 | DHM mean |  1.1 | 9.4 | 2.9 | 2.6 | 1.9 | 8.2 | 5.1 | 2.0 |
 | TRI mean | 4.6 | 7.0 | 5.9 | 7.3 | 7.1 | 5.7 | 9.2 | 5.5 |
+
 
 Here's the key for the class codes given in the table:  3 = Barren, 4 = Forest, 5 = Shrubland, 7 = Herbaceous, 8 = Planted/Cultivated, 9 = Wetlands, 21 = Lightly Developed, 23 = Heavily Developed
 

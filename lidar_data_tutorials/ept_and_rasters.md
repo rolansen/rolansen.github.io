@@ -549,7 +549,7 @@ Below are plots and a table showing the distributions of these patch-level metri
 | DHM mean |  1.1 | 9.4 | 2.9 | 2.6 | 1.9 | 8.2 | 5.1 | 2.0 |
 | TRI mean | 4.6 | 7.0 | 5.9 | 7.3 | 7.1 | 5.7 | 9.2 | 5.5 |
 
-
+\
 Here's the key for the class codes given in the table:  3 = Barren, 4 = Forest, 5 = Shrubland, 7 = Herbaceous, 8 = Planted/Cultivated, 9 = Wetlands, 21 = Lightly Developed, 23 = Heavily Developed
 
 If we wanted to more formally analyze how these distributions differ between classes, we could do ANOVA or a series of t-tests--our data appears, at least, normal enough for these to perform well. It seems that non-independence of the metrics between adjacent samples (patches) could complicate things, though, so we'll stop here.

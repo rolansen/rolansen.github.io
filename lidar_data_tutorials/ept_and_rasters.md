@@ -524,7 +524,7 @@ Let's look at patch-level SHAPE3D values and averages of DHM and TRI. I won't sh
 
 [patch-level shape3D image here]
 
-Below are plots and a table showing the distributions of these patch-level metrics for each class type present within the workunit boundary, after removing values above the metrics' 99.5th percentiles. I also included the distributions of averages weighed by patch size--these distributions are similar to pixel-level ones. It's difficult to get a global view of the patterns from these plots, but you may be able to get a somewhat clear picture by focusing on one class at a time. Here are some of my takeaways:
+Below are plots and a table showing the distributions of these patch-level metrics for each class type present within the workunit boundary, after removing values above the metrics' 99.5th percentiles. I also plotted the distributions of averages weighed by patch size--these distributions are similar to pixel-level ones. It's difficult to get a global view of the patterns from these plots, but you may be able to get a somewhat clear picture by focusing on one class at a time. Here are some of my takeaways:
 * For all classes, SHAPE3D seems to be much more variable than what I assumed after looking at the map of patch-level values. 
 * Forests and wetland patches tend to have the greatest average DHM values. Lightly developed patches tend to have average DHM values between forests/wetlands and the others. More heavily developed patches likely tend to have lower values because of parking lots and roads.
 * TRI means are similar among all classes. This could be due to TRI values often being greatest near patch boundaries, where sudden height changes are more likely, and low elsewhere.
@@ -532,7 +532,13 @@ Below are plots and a table showing the distributions of these patch-level metri
 
 [distribution plot here]
 
-[table here? TODO?: rerun code and copy/paste the spit-out metrics?]
+|   | 3 | 4 | 5 | 7 | 8 | 9 | 21 | 23 |
+| -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | 
+| number of patches | 97 | 5195 | 984 | 2790 | 9109 | 575 | 12036 | 3916 |
+| fraction of landscape | 0.00041 | 0.43 | 0.016 | 0.019 | 0.30 | 0.008 | 0.15 | 0.019 |
+| SHAPE3D mean | 3.8 | 1.7 | 2.6 | 2.4 | 3.0 | 1.7 | 1.6 | 2.1 |
+| DHM mean |  1.1 | 9.4 | 2.9 | 2.6 | 1.9 | 8.2 | 5.1 | 2.0 |
+| TRI mean | 4.6 | 7.0 | 5.9 | 7.3 | 7.1 | 5.7 | 9.2 | 5.5 |
 
 If we wanted to more formally analyze how these distributions differ between classes, we could do ANOVA or a series of t-tests--our data appears, at least, normal enough for these to perform well. It seems that non-independence of the metrics between adjacent samples (patches) could complicate things, though, so we'll stop here.
 

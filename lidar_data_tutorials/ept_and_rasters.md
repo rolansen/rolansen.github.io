@@ -532,7 +532,7 @@ Below are plots and a table showing the distributions of these patch-level metri
 
 [distribution plot here]
 
-|   | 3 | 4 | 5 | 7 | 8 | 9 | 21 | 23 |
+|  class | Barren | Forest | Shrubland | Herbaceous | Planted/Cultivated | Wetlands | Lightly Developed | Heavily Developed |
 | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | -------------  | 
 | number of patches | 97 | 5195 | 984 | 2790 | 9109 | 575 | 12036 | 3916 |
 | fraction of landscape | 0.00041 | 0.43 | 0.016 | 0.019 | 0.30 | 0.008 | 0.15 | 0.019 |

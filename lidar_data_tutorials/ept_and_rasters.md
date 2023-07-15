@@ -517,12 +517,19 @@ After looping through each triangle, we can just sum the results along the third
 surfa_array = np.sum(tri_surfa_array, axis=2) #per-pixel surface area
 vol_array = np.sum(tri_vol_array, axis=2) #per-pixel volume
 {%endhighlight%}
-
-[surface area and volume images]
     
 Let's look at patch-level SHAPE3D values and averages of DHM and TRI. I won't show any code for this or SHAPE3D calculations, mostly because what I wrote isn't very concise, but you can use the patch ID raster, *np.unique()* and a local reducer in a similar way to what’s done in *assign_lidar_z_means_within_pixels()*. 
 
-[patch-level shape3D image here]
+<div style="text-align: center">
+  <figure>
+      <img
+       src="/assets/shape3d_patches.png"
+       width="482"
+       height="413"
+     />
+     <figcaption>Natural logarithm of patch-level SHAPE3D values. </figcaption>
+  </figure>
+</div>\
 
 Below are plots and a table showing the distributions of these patch-level metrics for each class type present within the workunit boundary, after removing values above the metrics' 99.5th percentiles. I also plotted the distributions of averages weighed by patch size--these distributions are similar to pixel-level ones. It's difficult to get a global view of the patterns from these plots, but you may be able to get a somewhat clear picture by focusing on one class at a time. Here are some of my takeaways:
 * For all classes, SHAPE3D seems to be much more variable than what I assumed after looking at the map of patch-level values. 

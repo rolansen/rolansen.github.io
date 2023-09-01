@@ -274,7 +274,7 @@ async def find_heights_for_tile(las):
     await assign_lidar_z_means_within_pixels(lidar_rowcols, las, ground_returns_idx, 1)
 {% endhighlight %}
 
-*find_heights_for_tile()* is more intricate than the others. z-coordinates for the lidar data are sorted by image coordinates, the unique image coordinates are identified, a [local reduce operation](https://numpy.org/doc/stable/reference/generated/numpy.ufunc.reduceat.html) is used to find the mean z values corresponding to each image coordinate. In order to efficiently find mean z coordinates for each of the identified image coordinates, and these means are set as values for the appropriate cells of one of the elevation rasters.
+*assign_lidar_z_means_within_pixels()* is more intricate than the others. z-coordinate values for the lidar data are sorted by the corresponding image coordinates, unique image coordinates for the given set of lidar returns are identified, a [local reduce operation](https://numpy.org/doc/stable/reference/generated/numpy.ufunc.reduceat.html) is used to find the mean z values for each unique image coordinate pair, and finally these means are set as values for the appropriate cells of one of the elevation rasters.
 
 {% highlight Python %}
 async def assign_lidar_z_means_within_pixels(lidar_rowcols, las, las_idx, image_idx):
